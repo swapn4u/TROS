@@ -34,7 +34,7 @@ extension ProductCategoryVC : UICollectionViewDelegate , UICollectionViewDataSou
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProductCategoriesCell", for: indexPath) as! ProductCategoriesCell
-        cell.categoryImageView.image = UIImage(named: "c\(indexPath.row+1)")
+        cell.categoryImageView.image = UIImage(named: "\(categoriesListArr[indexPath.row])")
         cell.categoryNameLabel.text = categoriesListArr[indexPath.row]
         return cell
     }

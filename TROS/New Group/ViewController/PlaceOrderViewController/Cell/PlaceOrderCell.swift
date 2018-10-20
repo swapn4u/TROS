@@ -13,6 +13,8 @@ class PlaceOrderCell: UITableViewCell {
     @IBOutlet weak var productImageView: UIImageView!
     @IBOutlet weak var productNameLabel: UILabel!
     @IBOutlet weak var noOfOrder: UILabel!
+    @IBOutlet weak var productCost: UILabel!
+    @IBOutlet weak var productBrand: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -19,7 +19,7 @@ class ProductCategoryDetailsVC: UIViewController {
     var pageCount = 1
     var isProductsFinished = false
     var productCategoryName = ""
-    var isSearchBarHide = false
+    var isSearchBarHide = true
     var commonFilter = [ProductList(dict: [String:Any]())]
     {
         didSet{productTableView.reloadData()}
@@ -38,7 +38,19 @@ class ProductCategoryDetailsVC: UIViewController {
         customiseNavigationBarWith(isHideNavigationBar: false, headingText: productCategoryName, isBackBtnVisible: true, accessToOpenSlider: true, leftBarOptionToShow: .search)
         searchBar.placeholder = "Type to search products"
     }
-
+    @IBAction func CloseSearchBarPressed(_ sender: Any)
+    {
+        UIView.animate(withDuration: 0.5) {
+        self.isSearchBarHide = true
+        self.searchBarView.isHidden = true
+        self.searchBar.resignFirstResponder()
+        self.commonFilter.removeAll()
+        self.commonFilter = self.productList
+        }
+        
+    }
+    
+    
 }
 extension ProductCategoryDetailsVC:UITableViewDataSource,UITableViewDelegate
 {
@@ -94,7 +106,6 @@ extension ProductCategoryDetailsVC
 {
     func loadNextfifteenProducts()
     {
-        isSearchBarHide = false
         showLoaderWith(Msg: "Loading Products ...")
         ProductCategoriesListManager.loadCategoaryForProduct(productId:"\(productId)",pageCount:pageCount, completed: { (response) in
             switch response
@@ -114,17 +125,9 @@ extension ProductCategoryDetailsVC
     }
     @objc func openSearchBar()
     {
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.5) {
-                self.searchBarView.isHidden = self.isSearchBarHide
-                if self.isSearchBarHide
-                {
-                    self.searchBar.resignFirstResponder()
-                }
-                self.isSearchBarHide = !self.isSearchBarHide
-            }
-            self.commonFilter.removeAll()
-            self.commonFilter = self.productList
+        UIView.animate(withDuration: 0.5) {
+            self.searchBarView.isHidden = false
+            self.isSearchBarHide = false
         }
     }
     func getSearchProductWithText(_searchText : String)

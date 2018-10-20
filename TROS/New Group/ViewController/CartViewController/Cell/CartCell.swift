@@ -46,8 +46,8 @@ class CartCell: UITableViewCell {
         initialCount = sender.tag == 0 ? initialCount - 1 : initialCount+1
         initialCount = initialCount == 0 ? 1 : initialCount
         totalItemLabel.text = "\(initialCount)"
-       let currentPriceStr = self.amountLabel.text!.replacingOccurrences(of: " ₹ : ", with: "").trimmingCharacters(in: .whitespaces)
-        self.currentPrice = Double(currentPriceStr) ?? 0.0
+      // let currentPriceStr = self.amountLabel.text!.replacingOccurrences(of: " ₹ : ", with: "").trimmingCharacters(in: .whitespaces)
+       // self.currentPrice = Double(currentPriceStr) ?? 0.0
 //        amountLabel.text = " ₹ : \(initialCount*currentPrice)"
         delegate?.updateTotal(cell: self,tag:sender.tag)
     }

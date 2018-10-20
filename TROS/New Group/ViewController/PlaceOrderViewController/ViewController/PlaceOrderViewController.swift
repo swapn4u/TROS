@@ -22,16 +22,23 @@ class PlaceOrderViewController: UIViewController {
     @IBOutlet weak var addressEditVIew: UIView!
     
     
+    @IBOutlet weak var delivaryCharge: UILabel!
+    @IBOutlet weak var totalCost: UILabel!
+    @IBOutlet weak var totalItem: UILabel!
     @IBOutlet weak var editContactNoTF: UITextField!
     @IBOutlet weak var editAdressTF: UITextView!
     @IBOutlet weak var editNameTF: UITextField!
+    @IBOutlet weak var estimatedPrice: UILabel!
     
     var OrderListArr = ["Parachute","Bathing Bar" , "Handwash Skin Care","Toothpaste","Eyeconic Kajal","Mouth Wash","Detol Handwash","Meswak Toothpaste","Mach 3","Shower Gel"]
     
     let razorpayTestKey =  "rzp_live_ILgsfZCZoFIKMb"//"rzp_test_eqYSar04b0Gimj"
     
+    var  productOrder = [ProductOrder(dict:[String:Any]())]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
        customiseNavigationBarWith(isHideNavigationBar: false, headingText: "Place Order", isBackBtnVisible: true, accessToOpenSlider: true, leftBarOptionToShow: .none)
         
         customerName.text = getValueFor(key: "name")
@@ -43,7 +50,6 @@ class PlaceOrderViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        
         calculateTableHeight()
     }
     @IBAction func selcetPaymentMode(_ sender: UIButton)
@@ -69,13 +75,14 @@ class PlaceOrderViewController: UIViewController {
             }
             else if imageView.tag == 1 && imageView.image == #imageLiteral(resourceName: "radio_unselected")
             {
-                let image = UIImage(named: "user")
+                let image = #imageLiteral(resourceName: "trosIcon")
+                let amount = (Double((estimatedPrice.text ?? "").replacingOccurrences(of:" ₹ : " , with: "")) ?? 0.0) * 100.0
                 let options: [String:Any] = [
-                    "amount" : "150000" ,
+                    "amount" :  amount,
                     "description": "purchase products",
                     "currency" : "INR",
                     // "external" : ["wallets" : ["paytm" ]],
-                    "image": image! ,
+                    "image": image ,
                     "name": "TROS",
                     "prefill": [
                         "contact": "8007415573",
@@ -133,13 +140,15 @@ class PlaceOrderViewController: UIViewController {
 extension PlaceOrderViewController : UITableViewDelegate,UITableViewDataSource
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return OrderListArr.count
+        return productOrder.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceOrderCell") as! PlaceOrderCell
-        cell.productImageView.image = UIImage(named: "c\(indexPath.row+1)")
-        cell.productNameLabel.text = OrderListArr[indexPath.row]
-        cell.noOfOrder.text = String(arc4random_uniform(6) + 1)
+        cell.productImageView.sd_setImage(with: URL(string: productOrder[indexPath.row].imageURL), placeholderImage: UIImage(named: PlaceholderImage))
+        cell.productNameLabel.text = productOrder[indexPath.row].name
+        cell.productBrand.text = productOrder[indexPath.row].brand
+        cell.productCost.text = "₹ : \(Double(productOrder[indexPath.row].cost) ?? 0.0)"
+        cell.noOfOrder.text = productOrder[indexPath.row].totalProducts
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -156,7 +165,11 @@ extension PlaceOrderViewController : UITableViewDelegate,UITableViewDataSource
         })
     }
     func calculateTableHeight() {
-        tableHeightConstraints.constant = CGFloat(OrderListArr.count * 94)
+        tableHeightConstraints.constant = CGFloat(productOrder.count * 94)
+        let priceStruct = productOrder.last
+        totalCost.text = priceStruct?.totalCost ?? "-"
+        totalItem.text = priceStruct?.totalProducts ?? "-"
+        estimatedPrice.text = priceStruct?.totalCost ?? "-"
     }
 }
 extension PlaceOrderViewController : addressChangesProtocol
@@ -180,7 +193,6 @@ extension PlaceOrderViewController : RazorpayPaymentCompletionProtocol , Externa
 {
     func onPaymentError(_ code: Int32, description str: String)
     {
-        
         let alertController = UIAlertController(title: "Uh-Oh!", message: "Your payment failed due to an error : \(str) " , preferredStyle: UIAlertControllerStyle.alert)
         let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
         alertController.addAction(cancelAction)
@@ -195,12 +207,10 @@ extension PlaceOrderViewController : RazorpayPaymentCompletionProtocol , Externa
     }
     
     //for external payment
-    func onExternalWalletSelected(_ walletName: String, WithPaymentData paymentData: [AnyHashable : Any]?)
+    func onExternalWalletSelected(_ wlletName: String, WithPaymentData paymentData: [AnyHashable : Any]?)
     {
-        print(paymentData?.description)
+        print(paymentData?.description ?? "no product discription found")
     }
-    
-    // - (void)onExternalWalletSelected:(NSString *)walletName
     
 }
 
