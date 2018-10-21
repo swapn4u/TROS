@@ -52,6 +52,7 @@
 		189459302178A30600E42684 /* CartData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1894592E2178A30600E42684 /* CartData+CoreDataClass.swift */; };
 		189459362178A8FC00E42684 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189459332178A8FB00E42684 /* CoreDataManager.swift */; };
 		189459392178AD2C00E42684 /* CartData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189459382178AD2C00E42684 /* CartData+CoreDataProperties.swift */; };
+		18CAB444217B8F910090A850 /* AuthoriseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CAB443217B8F910090A850 /* AuthoriseManager.swift */; };
 		B7A2559C2E03C25873FC8039 /* Pods_TROS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAF03159AF1CADCF576ED3B6 /* Pods_TROS.framework */; };
 /* End PBXBuildFile section */
 
@@ -124,6 +125,7 @@
 		1894592E2178A30600E42684 /* CartData+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CartData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		189459332178A8FB00E42684 /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		189459382178AD2C00E42684 /* CartData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CartData+CoreDataProperties.swift"; path = "/Users/apple/Desktop/Swapnil/TROS/TROS/Utilities/DataBase/CartData+CoreDataProperties.swift"; sourceTree = "<absolute>"; };
+		18CAB443217B8F910090A850 /* AuthoriseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthoriseManager.swift; sourceTree = "<group>"; };
 		FAF03159AF1CADCF576ED3B6 /* Pods_TROS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TROS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -409,7 +411,8 @@
 		1852D83220DC130300D77A3A /* VeryfiUserViewController */ = {
 			isa = PBXGroup;
 			children = (
-				1852D83320DC135F00D77A3A /* VerifyViewController.swift */,
+				18CAB442217B8F580090A850 /* ServiceManager */,
+				18CAB441217B8F340090A850 /* ViewController */,
 			);
 			path = VeryfiUserViewController;
 			sourceTree = "<group>";
@@ -489,6 +492,22 @@
 				1852D84B20DD096400D77A3A /* CartCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		18CAB441217B8F340090A850 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1852D83320DC135F00D77A3A /* VerifyViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		18CAB442217B8F580090A850 /* ServiceManager */ = {
+			isa = PBXGroup;
+			children = (
+				18CAB443217B8F910090A850 /* AuthoriseManager.swift */,
+			);
+			path = ServiceManager;
 			sourceTree = "<group>";
 		};
 		AE66C0DBB3DAC07B959D4672 /* Frameworks */ = {
@@ -664,6 +683,7 @@
 				18401CDF210DA17600D2E214 /* CreateAddressVC.swift in Sources */,
 				1852D82620DC11A700D77A3A /* String + Extension.swift in Sources */,
 				1852D84120DCE31100D77A3A /* ProductCategoryDetailsVC.swift in Sources */,
+				18CAB444217B8F910090A850 /* AuthoriseManager.swift in Sources */,
 				180DC85A2178346F006D2B54 /* CategoryList.swift in Sources */,
 				1852D7C920DC00F000D77A3A /* AppDelegate.swift in Sources */,
 				180DC86A21786145006D2B54 /* SVRadialGradientLayer.m in Sources */,

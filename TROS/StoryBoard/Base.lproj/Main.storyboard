@@ -485,6 +485,9 @@
                                                         </fragment>
                                                     </attributedString>
                                                 </state>
+                                                <connections>
+                                                    <action selector="verifyOTPPressed:" destination="TBj-Th-Vn3" eventType="touchUpInside" id="GTG-hM-Tcb"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -539,6 +542,7 @@
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <connections>
+                        <outlet property="enterOTPLabel" destination="SyT-0P-QZV" id="u1x-BM-5lq"/>
                         <outlet property="mobileNoLabel" destination="ACn-pB-BtI" id="dhZ-7D-hTE"/>
                         <outlet property="nameLabel" destination="GzF-ry-Inq" id="g5W-vQ-Dcc"/>
                         <outlet property="otpView" destination="ByD-8A-PzS" id="B1t-Ae-lXF"/>

@@ -18,15 +18,14 @@ class VerifyViewController: UIViewController {
     @IBOutlet weak var mobileNoLabel: UITextField!
     
     @IBOutlet weak var otpView: UIStackView!
+    @IBOutlet weak var enterOTPLabel: UITextField!
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        //self.otpView.isHidden = true
         otpView.alpha = 0
         requestAuthorization { (successs) in
         
         }
-        UNUserNotificationCenter.current().delegate = self
      
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -34,6 +33,7 @@ class VerifyViewController: UIViewController {
            customiseNavigationBarWith(isHideNavigationBar: false, headingText: "Provide Details", isBackBtnVisible: true, accessToOpenSlider: false, leftBarOptionToShow: .none)
     }
 
+   
     @IBAction func SubmitButtenPressed(_ sender: UIButton)
     {
         let categoryVC = self.loadViewController(identifier: "ProductCategoryVC") as! ProductCategoryVC
@@ -47,50 +47,36 @@ class VerifyViewController: UIViewController {
     
     @IBAction func getOtpPressed(_ sender: UIButton)
     {
-        UIView.animate(withDuration: 1.0, animations: {
-             self.otpView.alpha = 1
-        }) { (completed) in
-            UNUserNotificationCenter.current().getNotificationSettings { (notificationSettings) in
-                switch notificationSettings.authorizationStatus {
-                case .notDetermined:
-                    self.requestAuthorization(completionHandler: { (success) in
-                        guard success else { return }
-                        
-                        // Schedule Local Notification
-                        self.scheduleLocalNotification()
-                    })
-                case .authorized:
-                    // Schedule Local Notification
-                    self.scheduleLocalNotification()
-                case .denied:
-                    print("Application Not Allowed to Display Notifications")
+        self.showLoaderWith(Msg: "sendimg OTP ..")
+        AuthoriseManager.verifyMobile(mobileNo: mobileNoLabel.text ?? "") { (response) in
+            switch response
+            {
+            case .success(let resultMsg):
+                self.dismissLoader()
+                UIView.animate(withDuration: 1.0, animations: {
+                self.otpView.alpha = 1
+                self.enterOTPLabel.becomeFirstResponder()
+                }, completion: { (sucess) in
+                     self.showAlertFor(title: "Generate OTP", description: resultMsg)
+                })
+                
+            case .failure(let error):
+                self.dismissLoader()
+                switch error {
+                case .unknownError( _,_) :
+                    self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
+                default:
+                    self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
                 }
             }
+            
         }
     }
-    private func scheduleLocalNotification() {
-        // Create Notification Content
-        let notificationContent = UNMutableNotificationContent()
+    @IBAction func verifyOTPPressed(_ sender: UIButton)
+    {
         
-        // Configure Notification Content
-        notificationContent.title = "TROS"
-        let password = fourDigitNumber
-        notificationContent.subtitle = "Your TROP Registrastion OTP is : \(password) "
-        notificationContent.body = ""
-        
-        // Add Trigger
-        let notificationTrigger = UNTimeIntervalNotificationTrigger(timeInterval: 6.0, repeats: false)
-        
-        // Create Notification Request
-        let notificationRequest = UNNotificationRequest(identifier: "cocoacasts_local_notification", content: notificationContent, trigger: notificationTrigger)
-        
-        // Add Request to User Notification Center
-        UNUserNotificationCenter.current().add(notificationRequest) { (error) in
-            if let error = error {
-                print("Unable to Add Notification Request (\(error), \(error.localizedDescription))")
-            }
-        }
     }
+   
     @IBAction func SelectGenderPressed(_ sender: UIButton)
     {
         for imageView in genderImageOutletCollection
@@ -98,7 +84,6 @@ class VerifyViewController: UIViewController {
             imageView.image = imageView.tag == sender.tag ? #imageLiteral(resourceName: "selected") : #imageLiteral(resourceName: "radio_unselected")
         }
     }
-    
 
 }
 extension VerifyViewController: UNUserNotificationCenterDelegate {

@@ -92,7 +92,8 @@ class ServerManager: NSObject
     
     class func postRequestfor(urlString:String,parameter:[String:Any],closure: @escaping (Result<JSON, ServerError>) -> Void)
     {
-        Alamofire.request(urlString, method: .post, parameters: parameter, encoding: JSONEncoding.default)
+        
+        Alamofire.request(urlString, method: .post, parameters: parameter, encoding: JSONEncoding.default,headers:["Content-Type":"application/json"])
             .downloadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
                 print("Progress: \(progress.fractionCompleted)")
             }
