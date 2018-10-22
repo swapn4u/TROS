@@ -16,7 +16,9 @@ class VerifyViewController: UIViewController {
     @IBOutlet var genderImageOutletCollection: [UIImageView]!
     @IBOutlet weak var nameLabel: UITextField!
     @IBOutlet weak var mobileNoLabel: UITextField!
+    @IBOutlet weak var emailID: UITextField!
     
+    @IBOutlet weak var countryCode: UITextField!
     @IBOutlet weak var otpView: UIStackView!
     @IBOutlet weak var enterOTPLabel: UITextField!
     override func viewDidLoad()
@@ -48,7 +50,8 @@ class VerifyViewController: UIViewController {
     @IBAction func getOtpPressed(_ sender: UIButton)
     {
         self.showLoaderWith(Msg: "sendimg OTP ..")
-        AuthoriseManager.verifyMobile(mobileNo: mobileNoLabel.text ?? "") { (response) in
+        AuthoriseManager.verifyMobile(dict: ["mobile"
+            : mobileNoLabel.text ?? "","dialCode" : countryCode.text ?? "+91"]) { (response) in
             switch response
             {
             case .success(let resultMsg):
@@ -74,7 +77,47 @@ class VerifyViewController: UIViewController {
     }
     @IBAction func verifyOTPPressed(_ sender: UIButton)
     {
-        
+        self.showLoaderWith(Msg: "Verifing User...")
+        AuthoriseManager.verifyUser(dict: ["mobile":mobileNoLabel.text ?? "","dialCode" : countryCode.text ?? "+91"]) { (response) in
+            switch response
+            {
+            case .success(let isExistingUser):
+                self.dismissLoader()
+                self.showLoaderWith(Msg: "Verifing OTP...")
+               let nameArr = (self.nameLabel.text ?? "").split(separator: " ")
+               let firstName =  nameArr.first ?? ""
+               let lastName = nameArr.count > 1 ? nameArr.last! : ""
+                //["isNew":isExistingUser,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName , "lastName": lastName,"displayName":firstName,"versionCode":"160000001"]
+               AuthoriseManager.verifyOTP(dict: ["isNew":"0","otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"versionCode":"160000001"], completed: { (response) in
+                switch response
+                {
+                case .success(let resultMsg):
+                    self.dismissLoader()
+                    print(resultMsg)
+                    
+                case .failure(let error):
+                    self.dismissLoader()
+                    switch error {
+                    case .unknownError( _,_) :
+                        self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
+                    default:
+                        self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                    }
+                }
+                
+               })
+                
+            case .failure(let error):
+                self.dismissLoader()
+                switch error {
+                case .unknownError( _,_) :
+                    self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
+                default:
+                    self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                }
+            }
+            
+        }
     }
    
     @IBAction func SelectGenderPressed(_ sender: UIButton)

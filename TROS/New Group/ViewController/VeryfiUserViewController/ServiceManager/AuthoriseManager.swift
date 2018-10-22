@@ -10,16 +10,14 @@ import UIKit
 
 class AuthoriseManager: NSObject
 {
-    class func verifyMobile(mobileNo:String,completed:@escaping(Result<String, ServerError>) ->Void)
+    class func verifyMobile(dict:[String:Any],completed:@escaping(Result<String, ServerError>) ->Void)
     {
         let url = BASE_URL + "generateOTP"
-        ServerManager.postRequestfor(urlString:url, parameter:["mobile"
-            : mobileNo,"dialCode" : "91"]) { (result) in
+        ServerManager.postRequestfor(urlString:url, parameter:dict) { (result) in
                 switch(result)
                 {
                     case .success(let response):
                         guard let _ = response.dictionary else {
-                            
                             completed(.failure(.unknownError(message: "Please Enter Valid Mobile Number", statusCode: 000)))
                             return
                         }
@@ -29,7 +27,48 @@ class AuthoriseManager: NSObject
                         completed(.failure(error))
                         break
                     }
+        }
+    }
+    class func verifyUser(dict:[String:Any],completed:@escaping(Result<Bool, ServerError>) ->Void)
+    {
+        let url = BASE_URL + "checkUserExist"
+        ServerManager.postRequestfor(urlString:url, parameter:dict) { (result) in
+                switch(result)
+                {
+                case .success(let response):
+                    guard let isExistingUser = (response.dictionaryObject)?["exists"] as? Bool else {
+                        completed(.failure(.unknownError(message: "Please Enter Valid Mobile Number", statusCode: 000)))
+                        return
+                    }
+                      completed(.success(isExistingUser))
                     
+                    break
+                case .failure(let error):
+                    completed(.failure(error))
+                    break
+                }
+                
+        }
+    }
+    class func verifyOTP(dict:[String:Any],completed:@escaping(Result<Bool, ServerError>) ->Void)
+    {
+        let url = BASE_URL + "verifyUserOTP"
+        ServerManager.postRequestfor(urlString:url, parameter:dict) { (result) in
+            switch(result)
+            {
+            case .success(let response):
+                guard let isExistingUser = (response.dictionaryObject)?["exists"] as? Bool else {
+                    completed(.failure(.unknownError(message: "Please Enter Valid Mobile Number", statusCode: 000)))
+                    return
+                }
+                completed(.success(isExistingUser))
+                
+                break
+            case .failure(let error):
+                completed(.failure(error))
+                break
+            }
+            
         }
     }
 }

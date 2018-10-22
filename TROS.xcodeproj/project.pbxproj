@@ -19,6 +19,7 @@
 		180DC86D21786145006D2B54 /* SVIndefiniteAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 180DC86721786145006D2B54 /* SVIndefiniteAnimatedView.m */; };
 		180DC86E21786145006D2B54 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 180DC86821786145006D2B54 /* SVProgressHUD.m */; };
 		180DC87021786160006D2B54 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180DC86F21786160006D2B54 /* QuartzCore.framework */; };
+		183EBFEB217C75ED00335AC4 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183EBFEA217C75ED00335AC4 /* RootViewController.swift */; };
 		18401CD9210D93E800D2E214 /* SelectAddressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18401CD8210D93E800D2E214 /* SelectAddressVC.swift */; };
 		18401CDC210D945600D2E214 /* SelectAddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18401CDB210D945600D2E214 /* SelectAddressCell.swift */; };
 		18401CDF210DA17600D2E214 /* CreateAddressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18401CDE210DA17600D2E214 /* CreateAddressVC.swift */; };
@@ -90,6 +91,7 @@
 		180DC86821786145006D2B54 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
 		180DC86921786145006D2B54 /* SVProgressHUD-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SVProgressHUD-Prefix.pch"; sourceTree = "<group>"; };
 		180DC86F21786160006D2B54 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		183EBFEA217C75ED00335AC4 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		18401CD8210D93E800D2E214 /* SelectAddressVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAddressVC.swift; sourceTree = "<group>"; };
 		18401CDB210D945600D2E214 /* SelectAddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAddressCell.swift; sourceTree = "<group>"; };
 		18401CDE210DA17600D2E214 /* CreateAddressVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAddressVC.swift; sourceTree = "<group>"; };
@@ -188,6 +190,14 @@
 			path = CommonFiles;
 			sourceTree = "<group>";
 		};
+		183EBFE9217C75BA00335AC4 /* RootViewController */ = {
+			isa = PBXGroup;
+			children = (
+				183EBFEA217C75ED00335AC4 /* RootViewController.swift */,
+			);
+			path = RootViewController;
+			sourceTree = "<group>";
+		};
 		18401CD7210D93A700D2E214 /* AddOrUpdateAddressVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -272,6 +282,7 @@
 		1852D7DD20DC010100D77A3A /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				183EBFE9217C75BA00335AC4 /* RootViewController */,
 				1852D7DF20DC012900D77A3A /* Appdelegate */,
 				1852D7DE20DC011A00D77A3A /* ViewController */,
 			);
@@ -666,6 +677,7 @@
 			files = (
 				1852D82920DC11A700D77A3A /* UIImageView + Extension.swift in Sources */,
 				1843820220DDFB3F00CF41F1 /* PlaceOrderCell.swift in Sources */,
+				183EBFEB217C75ED00335AC4 /* RootViewController.swift in Sources */,
 				1852D84C20DD096400D77A3A /* CartCell.swift in Sources */,
 				18401CD9210D93E800D2E214 /* SelectAddressVC.swift in Sources */,
 				18401CDC210D945600D2E214 /* SelectAddressCell.swift in Sources */,

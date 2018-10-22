@@ -24,6 +24,7 @@ extension UIViewController
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.navigationItem.searchController = nil
         self.revealViewController().panGestureRecognizer().isEnabled = false
+        
         //set title
         self.navigationController?.navigationBar.barTintColor=UIColor.red
         let label = UILabel(frame: CGRect(x: 0, y: 0, width:UIScreen.main.bounds.width/2 , height:44))

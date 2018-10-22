@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Google licence Key
         GMSServices.provideAPIKey("AIzaSyDvCxixNKvE8DSFohr0rPz2CHMwrndFGi4")
         GMSPlacesClient.provideAPIKey("AIzaSyDvCxixNKvE8DSFohr0rPz2CHMwrndFGi4")
-       
+ 
         return true
     }
 
