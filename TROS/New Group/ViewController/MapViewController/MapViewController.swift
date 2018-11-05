@@ -23,6 +23,7 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         self.mapViewPresenter.delegate = self
         setUpMyLocation()
+        setRootVC("MapViewController")
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -55,6 +56,7 @@ class MapViewController: UIViewController {
     @IBAction func UseloactionAndProceedPressed(_ sender: UIButton)
     {
         let VerifylVC = self.loadViewController(identifier: "VerifyViewController") as! VerifyViewController
+        locationManager.stopUpdatingLocation()
         self.navigationController?.pushViewController(VerifylVC, animated: true)
     }
 }
@@ -94,6 +96,7 @@ extension MapViewController : CLLocationManagerDelegate,GMSMapViewDelegate
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker)
     {
         let VerifylVC = self.loadViewController(identifier: "VerifyViewController") as! VerifyViewController
+        locationManager.stopUpdatingLocation()
         self.navigationController?.pushViewController(VerifylVC, animated: true)
     }
 }
@@ -112,7 +115,7 @@ extension MapViewController
     saveRecord(value: address, forKey: "address")
     marker.map = mapViewPresenter
 }
-    func searchButtonPressed()
+    @objc func searchButtonPressed()
     {
         let autocompleteController = GMSAutocompleteViewController()
         autocompleteController.delegate = self

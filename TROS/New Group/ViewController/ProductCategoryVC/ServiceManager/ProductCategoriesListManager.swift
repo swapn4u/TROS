@@ -43,7 +43,7 @@ class ProductCategoriesListManager: NSObject {
     //getBaseUrl() + "products?lat=" + latitude + "&lon=" + longitude + "&search=" + search + "&category=" + category;
     class func getSearchResultFor(searchText:String,category:Int,completed:@escaping(Result<[ProductList], ServerError>) ->Void)
     {
-        let url = BASE_URL + "products?lat=19.136326&lon=72.827660&search=\(searchText)&category=\(category)"
+        let url = BASE_URL + "products?lat=19.136326&lon=72.827660&search=\(searchText)&category=\(category)".replacingOccurrences(of: " ", with: "%20")
         ServerManager.getRequestfor(urlString: url){ (result) in
             switch result
             {

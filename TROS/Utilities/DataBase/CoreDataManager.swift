@@ -14,6 +14,7 @@ class CoreDataManager {
     
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     let fetchCartRequest = NSFetchRequest <NSFetchRequestResult> (entityName: "CartData")
+    let orderDataRequest = NSFetchRequest <NSFetchRequestResult> (entityName: "OrderData")
     
     func saveData(recordDict:ProductList,completion:(Bool)->Void)
     {
@@ -38,6 +39,31 @@ class CoreDataManager {
             completion(false)
         }
     }
+    func saveOrderId(orderId:String,complation:@escaping(Bool)->Void)
+    {
+        let orderDataContext = NSEntityDescription.entity(forEntityName: "OrderData", in: context!)
+        guard let managerData = NSManagedObject.init(entity: orderDataContext!, insertInto: context!) as? OrderData else {return}
+        managerData.orderId = orderId
+        
+        do {
+            try context?.save()
+            complation(true)
+        } catch let err {
+            print(err)
+            complation(false)
+        }
+    }
+    func fetchOrderId()->[OrderData]?
+    {
+        do {
+            let orderIdData = (try context!.fetch(orderDataRequest) as? [OrderData])
+            return orderIdData
+        } catch let err {
+            print(err.localizedDescription)
+        }
+        return [OrderData]()
+    }
+    
     func fetch() -> [CartData]? {
          do {
             let cartData = (try context!.fetch(fetchCartRequest) as? [CartData])
@@ -47,27 +73,31 @@ class CoreDataManager {
         }
        return [CartData]()
     }
+    
+    func deleteOrderId(id:String,completion:@escaping(Bool)->Void)
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OrderData")
+        let predicate = NSPredicate(format: "orderId == %@",id)
+        fetchRequest.predicate = predicate
+        
+        let result = try? context!.fetch(fetchRequest)
+        let resultData = result as! [OrderData]
+        
+        for object in resultData {
+            context?.delete(object)
+        }
+        
+        do {
+            try context?.save()
+            print("saved!")
+            completion(true)
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+            completion(false)
+        }
+    }
     func deleteProductFromCart(id:String,completion:@escaping(Bool)->Void)
     {
-//        fetchCartRequest.predicate = NSPredicate(format: "id = %@", id)
-//        do{
-//            let cartResult = try context?.fetch(fetchCartRequest)
-//            let cartResultToDelete = cartResult![0] as! NSManagedObject
-//            context?.delete(cartResultToDelete)
-//            do {
-//                try context?.save()
-//                completion(true)
-//            } catch let err {
-//                print(err)
-//                completion(false)
-//            }
-//        }
-//        catch let error
-//        {
-//            print(error.localizedDescription)
-//             completion(false)
-//        }
-        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
         let predicate = NSPredicate(format: "id == %@",id)
         fetchRequest.predicate = predicate
@@ -86,6 +116,19 @@ class CoreDataManager {
         } catch let error as NSError  {
             print("Could not save \(error), \(error.userInfo)")
             completion(false)
+        }
+    }
+    func deleteAllProductFromCart(completed:@escaping(Bool)->Void)
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
+        let request = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        do {
+            let result = try context?.execute(request)
+            completed(true)
+        } catch (let error)
+        {
+            completed(true)
+            print(error.localizedDescription)
         }
     }
 

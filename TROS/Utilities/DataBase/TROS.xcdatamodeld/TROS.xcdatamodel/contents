@@ -12,7 +12,11 @@
         <attribute name="quantity" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unit" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="OrderData" representedClassName="OrderData" syncable="YES">
+        <attribute name="orderId" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
         <element name="CartData" positionX="-63" positionY="-18" width="128" height="195"/>
+        <element name="OrderData" positionX="-63" positionY="54" width="128" height="60"/>
     </elements>
 </model>

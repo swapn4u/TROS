@@ -15,8 +15,10 @@ import GooglePlaces
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    var currentErrorView = ErrorAlertController()
+    var errorViewLoadedOnTableView = UITableView()
+    var isNodataAvilableActive = false
+    var initialRootViewController = UIViewController()
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         UIApplication.shared.statusBarStyle = .lightContent
@@ -26,7 +28,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Google licence Key
         GMSServices.provideAPIKey("AIzaSyDvCxixNKvE8DSFohr0rPz2CHMwrndFGi4")
         GMSPlacesClient.provideAPIKey("AIzaSyDvCxixNKvE8DSFohr0rPz2CHMwrndFGi4")
- 
+        
+        let window = UIWindow(frame:UIScreen.main.bounds)
+        self.window = window
+        initialRootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
+        if let roorController = UserDefaults.standard.value(forKey: "root") as? String
+        {
+            if roorController == "MapViewController"
+            {
+                initialRootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
+            }
+            else if roorController == "ProductCategoriesVC"
+            {
+                initialRootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ProductCategoriesVC") as! ProductCategoriesVC
+            }
+        }
+        
+        let rearViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MenuViewController") as! MenuViewController
+        let frontNavigationController = UINavigationController(rootViewController: initialRootViewController)
+        let rearNavigationController = UINavigationController(rootViewController: rearViewController)
+        
+        let revealController = SWRevealViewController(rearViewController: rearNavigationController, frontViewController: frontNavigationController)
+        revealController?.delegate = self
+        self.window?.rootViewController = revealController
+        self.window?.makeKeyAndVisible()
         return true
     }
 
@@ -99,5 +124,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+}
+extension AppDelegate : SWRevealViewControllerDelegate
+{
+    
 }
 

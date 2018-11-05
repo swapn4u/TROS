@@ -12,20 +12,27 @@ struct ProductOrder
 {
     var name : String
     var cost : String
+    var actualCost : String
     var noOfItem : String
     var imageURL : String
     var brand : String
     var totalProducts : String
     var totalCost : String
-    var isAdding = true
+    var id : String
+    var unit : String
+    var quantity : String
     init(dict:[String:Any]) {
         self.name = dict["name"] as? String ?? ""
+        self.actualCost = dict["actualCost"] as? String ?? ""
         self.cost = dict["cost"] as? String ?? "0.0"
-        self.noOfItem = dict["noOfItem"] as? String ?? ""
+        self.noOfItem = dict["noOfItem"] as? String ?? "1"
         self.imageURL = dict["imageURL"] as? String ?? ""
         self.brand = dict["brand"] as? String ?? ""
         self.totalProducts = dict["totalProducts"] as? String ?? "1"
         self.totalCost = dict["totalCost"] as? String ?? ""
+        self.id = dict["id"] as? String ?? ""
+        self.unit = dict["unit"] as? String ?? ""
+        self.quantity = dict["quantity"] as? String ?? "0"
     }
     
 }
@@ -39,12 +46,14 @@ class CartViewController: UIViewController {
     @IBOutlet weak var cartTable: UITableView!
     @IBOutlet weak var productNameLbl: UILabel!
     @IBOutlet weak var OfferrImageView: UIImageView!
+    @IBOutlet weak var checkOutnt: UIButton!
     
     //Variables and constance
     var isFromMenuSelection = false
     var cartRecords = [CartData]()
     var updatedCartRecord = [ProductOrder]()
     var originalCartRecords = [ProductOrder]()
+    var isQuantityEditable = false
 
    //view  life cycle
     override func viewDidLoad() {
@@ -53,9 +62,9 @@ class CartViewController: UIViewController {
         {
             self.cartRecords = cartRecords
             updatedCartRecord =  cartRecords.map { (element) -> ProductOrder in
-                let dict = ["name":element.name ?? "","cost":element.cost ?? "" ,"noOfItem":"1","imageURL":element.imageUrl ?? "","brand": element.brand ?? "","totalCost":self.grandTotalLabel.text ?? "","totalProducts": "0"]
+                let dict = ["name":element.name ?? "","cost":element.cost ?? "" ,"actualCost" : element.cost!,"noOfItem":"1","imageURL":element.imageUrl ?? "","brand": element.brand ?? "","totalCost":self.grandTotalLabel.text ?? "","totalProducts": "1","id":element.id ?? "","unit":element.unit ?? "","quantity":element.quantity ?? ""]
                 return ProductOrder(dict: dict)
-                }
+            }
             originalCartRecords = updatedCartRecord
             cartTable.reloadData()
         }
@@ -84,14 +93,10 @@ extension CartViewController
     @IBAction func PlaceOrderPressed(_ sender: UIButton)
     {
         let orderVC = self.loadViewController(identifier: "PlaceOrderViewController") as! PlaceOrderViewController
-//        var productOrderArr = [[String:Any]]()
-//        var totalCount = 0
-        
        let updatedCartRecords =  originalCartRecords.map { (element) -> ProductOrder in
-            let dict = ["name":element.name,"cost":element.cost ,"noOfItem":element.noOfItem,"imageURL":element.imageURL,"brand": element.brand,"totalCost":self.grandTotalLabel.text ?? "0.0","totalProducts": element.totalProducts]
+        let dict = ["name":element.name,"cost":element.cost ,"noOfItem":element.noOfItem,"imageURL":element.imageURL,"brand": element.brand,"totalCost":self.grandTotalLabel.text ?? "0.0","totalProducts": element.totalProducts,"unit":element.unit,"id":element.id,"quantity":element.quantity]
             return ProductOrder(dict: dict)
         }
-      // let placeOrder = productOrderArr.compactMap{ProductOrder(dict: $0)}
         orderVC.productOrder = updatedCartRecords
         self.navigationController?.pushViewController(orderVC, animated: true)
     }
@@ -99,7 +104,16 @@ extension CartViewController
 extension CartViewController : UITableViewDelegate,UITableViewDataSource
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return originalCartRecords.count
+        if originalCartRecords.isEmpty
+        {
+            loadErrorViewOn(subview: self.view, forAlertType: .NoDataAvailable, errorMessage: "Oops ...your cart is Empty") {}
+             return 0
+        }
+        else
+        {
+          return originalCartRecords.count
+        }
+       
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CartCell") as! CartCell
@@ -110,6 +124,7 @@ extension CartViewController : UITableViewDelegate,UITableViewDataSource
         cell.productName.text = originalCartRecords[indexPath.row].name
         cell.amountLabel.text = " ₹ : \(Double(originalCartRecords[indexPath.row].cost) ?? 0.0)"
         cell.deleteProductButton.tag = indexPath.row
+        cell.totalItemLabel.text = originalCartRecords[indexPath.row].totalProducts
         cell.currentPrice = Double(updatedCartRecord[indexPath.row].cost) ?? 0.0
         cell.deleteProductButton.addTarget(self, action: #selector(deleteProduct(sender:)), for: .touchUpInside)
         return cell
@@ -119,39 +134,45 @@ extension CartViewController : UITableViewDelegate,UITableViewDataSource
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath)
     {
-        cell.layer.transform = CATransform3DMakeScale(0.1,0.1,1)
-        UIView.animate(withDuration: 0.3, animations: {
-            cell.layer.transform = CATransform3DMakeScale(1.05,1.05,1)
-        },completion: { finished in
-            UIView.animate(withDuration: 0.1, animations: {
-                cell.layer.transform = CATransform3DMakeScale(1,1,1)
-            })
-        })
+        if !isQuantityEditable
+        {
+            cell.alpha = 0
+            UIView.animate(withDuration: 0.5, delay:0.2, options: [.curveEaseIn], animations: {
+                cell.alpha = 1
+            }, completion: nil)
+        }
+    }
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isQuantityEditable = false
     }
 }
 extension CartViewController : showGrandTotalProtocol
 {
     func updateTotal(cell:UITableViewCell,tag:Int)
     {
+        isQuantityEditable = true
           var total = 0.0
             if let cell = cell as? CartCell
             {
-                let cellvalue = originalCartRecords[cell.tag].cost
+                var updateValue = originalCartRecords[cell.tag]
+                var totalOrder = Int(updateValue.totalProducts)!
+                totalOrder = tag == 0 ? totalOrder == 1 ? 1 : totalOrder - 1 : totalOrder + 1
+                updateValue.totalProducts = "\(totalOrder)"
+                let cellvalue = updateValue.cost
                 if tag == 0
                 {
-                    total = (Double(cellvalue) ?? 0.0) -  cell.currentPrice
+                    total = (Double(cellvalue) ?? 0.0) -  Double(updateValue.actualCost)! 
                     total = total == 0 ? cell.currentPrice : total
                 }
                 else
                 {
-                   total = cell.currentPrice *  Double(cell.initialCount)
+                    total = Double(updateValue.actualCost )! *  Double(updateValue.totalProducts)!
                 }
-                var updateValue = originalCartRecords[cell.tag]
                 updateValue.cost = "\(total)"
-                updateValue.totalProducts = cell.totalItemLabel.text ?? "1"
                 originalCartRecords[cell.tag] = updateValue
                 cell.amountLabel.text = " ₹ : \(total)"
-                cartTable.reloadData()
+                cartTable.reloadRows(at: [IndexPath(row: cell
+                    .tag, section: 0)], with: .none)
                 calculateGrandTotal()
             }
     }

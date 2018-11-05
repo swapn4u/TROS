@@ -30,6 +30,9 @@ class PlaceOrderViewController: UIViewController {
     @IBOutlet weak var editNameTF: UITextField!
     @IBOutlet weak var estimatedPrice: UILabel!
     
+    @IBOutlet weak var promocodeHolder: UIView!
+    @IBOutlet weak var promocodeAmount: UILabel!
+    
     var OrderListArr = ["Parachute","Bathing Bar" , "Handwash Skin Care","Toothpaste","Eyeconic Kajal","Mouth Wash","Detol Handwash","Meswak Toothpaste","Mach 3","Shower Gel"]
     
     let razorpayTestKey =  "rzp_live_ILgsfZCZoFIKMb"//"rzp_test_eqYSar04b0Gimj"
@@ -59,6 +62,11 @@ class PlaceOrderViewController: UIViewController {
             imageView.image = imageView.tag == sender.tag ? #imageLiteral(resourceName: "selected") : #imageLiteral(resourceName: "radio_unselected")
         }
     }
+    @IBAction func ApplyPromodePressed(_ sender: UIButton)
+    {
+        let promocodeVC = self.loadViewController(identifier:"PromocodeVC") as! PromocodeVC
+        self.present(promocodeVC, animated: true)
+    }
     @IBAction func ChangeAddressPressed(_ sender: UIButton)
     {
         let selectAddressVC = self.loadViewController(identifier: "SelectAddressVC") as! SelectAddressVC
@@ -71,7 +79,38 @@ class PlaceOrderViewController: UIViewController {
         {
             if imageView.tag == 1 && imageView.image == #imageLiteral(resourceName: "selected")
             {
-                showAlertFor(title: "Your order is placed", description: "it will be delivered soon ..")
+                let paymetAlert =  UIAlertController(title: "Payment Mode", message: "Do You Confirm to Pay On delivary", preferredStyle: .alert)
+                let OkAction = UIAlertAction(title: "Yes", style: .default) { (alert) in
+                    self.showLoaderWith(Msg: "Please wait while placing the order ...")
+                    let dict = ["id":"","amount":"\(Double((self.estimatedPrice.text ?? "").replacingOccurrences(of:" ₹ : " , with: "")) ?? 0.0)","method":"cash","providerName":"tros"] as [String : Any]
+                    PlaceOrderManager.getPaymentIdFor(dict: dict, header: ["Content-Type":"application/json","authorization":self.getUserInfo()?.token ?? ""], completed: { (result) in
+                        switch result
+                        {
+                        case .success(let paymentInfo):
+                        self.placeOrder(productId: paymentInfo.paymrntId)
+                        
+                        case .failure(let error):
+                        self.dismissLoader()
+                        switch error {
+                        case .noInternetConnection :
+                        self.loadErrorViewOn(subview: self.view, forAlertType: .NoInternetConnection, errorMessage: NO_INTERNET_CONNECTIVITY, retryButtonAction: {
+                        })
+                        case .noDataAvailable:
+                        self.loadErrorViewOn(subview: self.view, forAlertType: .NoDataAvailable, errorMessage: NO_DATA_AVAILABLE_MSG, retryButtonAction: {
+                        })
+                        
+                        default:
+                        self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                        }
+                    }
+                    })
+                    
+                }
+                let cancelAction = UIAlertAction(title: "No", style: .destructive)
+                
+                paymetAlert.addAction(OkAction)
+                paymetAlert.addAction(cancelAction)
+                self.present(paymetAlert, animated: true, completion: nil)
             }
             else if imageView.tag == 1 && imageView.image == #imageLiteral(resourceName: "radio_unselected")
             {
@@ -100,7 +139,6 @@ class PlaceOrderViewController: UIViewController {
     }
     @IBAction func editAddressPressed(_ sender: UIButton)
     {
-        
         if sender.tag == 0
         {
             self.editNameTF.text = self.customerName.text
@@ -168,7 +206,7 @@ extension PlaceOrderViewController : UITableViewDelegate,UITableViewDataSource
         tableHeightConstraints.constant = CGFloat(productOrder.count * 94)
         let priceStruct = productOrder.last
         totalCost.text = priceStruct?.totalCost ?? "-"
-        totalItem.text = priceStruct?.totalProducts ?? "-"
+        totalItem.text = "\(productOrder.map{Int($0.totalProducts) ?? 0}.reduce(0, +))" 
         estimatedPrice.text = priceStruct?.totalCost ?? "-"
     }
 }
@@ -199,17 +237,66 @@ extension PlaceOrderViewController : RazorpayPaymentCompletionProtocol , Externa
         self.view.window?.rootViewController?.present(alertController, animated: true, completion: nil)
     }
     
-    func onPaymentSuccess(_ payment_id: String) {
-        let alertController = UIAlertController(title: "Yay!", message: "Your payment was successful. The payment ID is \(payment_id)", preferredStyle: UIAlertControllerStyle.alert)
-        let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
-        alertController.addAction(cancelAction)
-        self.view.window?.rootViewController?.present(alertController, animated: true, completion: nil)
+    func onPaymentSuccess(_ payment_id: String)
+    {
+        self.showLoaderWith(Msg: "Yay!..Your payment was successful...Redirecting to order place ..")
+        placeOrder(productId: payment_id)
+//        let alertController = UIAlertController(title: "Yay!", message: "Your payment was successful. The payment ID is \(payment_id)", preferredStyle: UIAlertControllerStyle.alert)
+//        let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
+//        alertController.addAction(cancelAction)
+//        self.view.window?.rootViewController?.present(alertController, animated: true, completion: nil)
     }
     
     //for external payment
     func onExternalWalletSelected(_ wlletName: String, WithPaymentData paymentData: [AnyHashable : Any]?)
     {
         print(paymentData?.description ?? "no product discription found")
+    }
+    func placeOrder(productId:String)
+    {
+        let orderDetails = productOrder.map{element -> [String:Any] in
+            let dict = ["cost":element.cost,"count":element.totalProducts,"imageUrl":element.imageURL,"productId":element.id,"productName":element.name,"quantity":element.quantity,"status":"1","unit":element.unit]
+            return dict
+        }
+        
+        let orderDict = ["payment":["method":"cash","paymentId":productId],"address":["line3":Address.text ?? "","line2":"","line1":"","loc":["19.1311563","72.8360014"],"type":"Point"],"items":orderDetails] as [String : Any]
+        
+        PlaceOrderManager.placeOrderFor(dict: orderDict, header: ["Content-Type":"application/json","authorization":self.getUserInfo()?.token ?? ""], completed: { (result) in
+            switch result
+            {
+            case .success(let placeOrderInfo):
+                CoreDataManager.manager.saveOrderId(orderId: placeOrderInfo.orderID, complation: { (sucess) in
+                    CoreDataManager.manager.deleteAllProductFromCart(completed: { (done) in
+                        let actionSheetController: UIAlertController = UIAlertController(title: "Order Status", message: "Your Order placed successFully . ", preferredStyle: .alert)
+                        let cancelAction: UIAlertAction = UIAlertAction(title: "OK", style: .cancel) { action -> Void in
+                            for controller in self.navigationController!.viewControllers as Array {
+                                if controller.isKind(of: ProductCategoriesVC.self) {
+                                    self.navigationController!.popToViewController(controller, animated: true)
+                                    break
+                                }
+                            }
+                        }
+                        actionSheetController.addAction(cancelAction)
+                        self.present(actionSheetController, animated: true, completion: nil)
+                    })
+                    self.dismissLoader()
+                })
+               
+            case .failure(let error):
+                self.dismissLoader()
+                switch error {
+                case .noInternetConnection :
+                    self.loadErrorViewOn(subview: self.view, forAlertType: .NoInternetConnection, errorMessage: NO_INTERNET_CONNECTIVITY, retryButtonAction: {
+                    })
+                case .noDataAvailable:
+                    self.loadErrorViewOn(subview: self.view, forAlertType: .NoDataAvailable, errorMessage: NO_DATA_AVAILABLE_MSG, retryButtonAction: {
+                    })
+                    
+                default:
+                    self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                }
+            }
+        })
     }
     
 }

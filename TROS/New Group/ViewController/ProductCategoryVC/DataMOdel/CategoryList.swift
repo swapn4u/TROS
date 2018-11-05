@@ -8,7 +8,7 @@
 
 import Foundation
 struct ProductList {
-   var imageHeight : Int
+    var imageHeight : Int
     var cost : Int
     var name : String
     var id : String

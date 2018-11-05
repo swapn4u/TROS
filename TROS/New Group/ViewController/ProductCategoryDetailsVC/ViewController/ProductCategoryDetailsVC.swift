@@ -24,7 +24,7 @@ class ProductCategoryDetailsVC: UIViewController {
     {
         didSet{productTableView.reloadData()}
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if !productList.isEmpty
@@ -32,6 +32,14 @@ class ProductCategoryDetailsVC: UIViewController {
             commonFilter = productList
             productTableView.reloadData()
         }
+        else
+        {
+            loadErrorViewOn(subview: self.view, forAlertType: .NoDataAvailable, errorMessage: NO_DATA_AVAILABLE_MSG) {
+                
+            }
+        }
+        productTableView.estimatedRowHeight = 110
+        productTableView.rowHeight = UITableViewAutomaticDimension
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -62,8 +70,10 @@ extension ProductCategoryDetailsVC:UITableViewDataSource,UITableViewDelegate
         cell.selectionStyle = .none
         cell.separatorInset = .zero
         cell.productImage.sd_setImage(with: URL(string: commonFilter[indexPath.row].imageUrl), placeholderImage: UIImage(named: PlaceholderImage))
-        cell.brandName.text = commonFilter[indexPath.row].brand
-        cell.price.text = "₹ : \(commonFilter[indexPath.row].cost)"
+        cell.brandName.text =  "Brand :" + commonFilter[indexPath.row].brand
+        cell.price.text = "₹ : \(commonFilter[indexPath.row].cost) / \(commonFilter[indexPath.row].unit)"
+        cell.descriptionText.isHidden = commonFilter[indexPath.row].description.trimmingCharacters(in: .whitespaces) == ""
+        cell.descriptionText.text = self.commonFilter[indexPath.row].description.html2String.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "\n", with: "")
         cell.productNameLabel.text = commonFilter[indexPath.row].name
         cell.addToCartButton.tag = indexPath.row
         cell.addToCartButton.addTarget(self, action: #selector(addToCartPressed(sender:)), for: .touchUpInside)
@@ -75,17 +85,14 @@ extension ProductCategoryDetailsVC:UITableViewDataSource,UITableViewDelegate
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
+        return UITableViewAutomaticDimension
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.layer.transform = CATransform3DMakeScale(0.1,0.1,1)
-        UIView.animate(withDuration: 0.3, animations: {
-            cell.layer.transform = CATransform3DMakeScale(1.05,1.05,1)
-        },completion: { finished in
-            UIView.animate(withDuration: 0.1, animations: {
-                cell.layer.transform = CATransform3DMakeScale(1,1,1)
-            })
-        })
+        cell.alpha = 0
+        UIView.animate(withDuration: 0.5, delay:0.2, options: [.curveEaseIn], animations: {
+            cell.alpha = 1
+            
+        }, completion: nil)
     }
 }
 extension ProductCategoryDetailsVC : UISearchBarDelegate
@@ -98,7 +105,14 @@ extension ProductCategoryDetailsVC : UISearchBarDelegate
         }
         else
         {
-        getSearchProductWithText(_searchText: searchBar.text ?? "")
+             getSearchProductWithText(_searchText: searchBar.text ?? "")
+        }
+    }
+     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
+     {
+        if searchText.count>0
+        {
+         getSearchProductWithText(_searchText: searchBar.text ?? "")
         }
     }
 }

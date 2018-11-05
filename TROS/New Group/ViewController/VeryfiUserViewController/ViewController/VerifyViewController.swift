@@ -26,7 +26,6 @@ class VerifyViewController: UIViewController {
         super.viewDidLoad()
         otpView.alpha = 0
         requestAuthorization { (successs) in
-        
         }
      
     }
@@ -38,7 +37,7 @@ class VerifyViewController: UIViewController {
    
     @IBAction func SubmitButtenPressed(_ sender: UIButton)
     {
-        let categoryVC = self.loadViewController(identifier: "ProductCategoryVC") as! ProductCategoryVC
+        let categoryVC = self.loadViewController(identifier: "ProductCategoriesVC") as! ProductCategoriesVC
         saveRecord(value: nameLabel.text!, forKey: "name")
         saveRecord(value: mobileNoLabel.text!, forKey: "mobileNo")
         let selectedGender = genderImageOutletCollection.filter{$0.image == #imageLiteral(resourceName: "selected")}
@@ -87,8 +86,16 @@ class VerifyViewController: UIViewController {
                let nameArr = (self.nameLabel.text ?? "").split(separator: " ")
                let firstName =  nameArr.first ?? ""
                let lastName = nameArr.count > 1 ? nameArr.last! : ""
-                //["isNew":isExistingUser,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName , "lastName": lastName,"displayName":firstName,"versionCode":"160000001"]
-               AuthoriseManager.verifyOTP(dict: ["isNew":"0","otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"versionCode":"160000001"], completed: { (response) in
+                var dict = [String:Any]()
+                if !isExistingUser
+                {
+                    dict = ["isNew":true,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName , "lastName": lastName,"displayName":firstName,"versionCode":"160000001"]
+                }
+                else
+                {
+                    dict = ["isNew":false,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"versionCode":"160000001"]
+                }
+               AuthoriseManager.verifyOTP(dict: dict, completed: { (response) in
                 switch response
                 {
                 case .success(let resultMsg):
@@ -143,13 +150,5 @@ extension VerifyViewController: UNUserNotificationCenterDelegate {
             
             completionHandler(success)
         }
-    }
-    var fourDigitNumber: String {
-        var result = ""
-        repeat {
-            // Create a string with a random number 0...9999
-            result = String(format:"%04d", arc4random_uniform(10000) )
-        } while Set<Character>(result.characters).count < 4
-        return result
     }
 }

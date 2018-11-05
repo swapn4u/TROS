@@ -19,7 +19,7 @@ class MenuViewController: UIViewController {
     @IBOutlet weak var profileView: UIView!
     
     @IBOutlet weak var menuListTableView: UITableView!
-    let options = ["Home","Change Location","My Cart","Offers","Notification","Share App","My Account","Login/Sign up"]
+    let options = ["Home","Change Location","My Cart","My Orders","Loggout"]//"Notification","Share App","My Account","Login/Sign up"]
     override func viewDidLoad() {
         super.viewDidLoad()
         nameLabel.text = getValueFor(key: "name")
@@ -34,16 +34,16 @@ extension MenuViewController : UITableViewDelegate , UITableViewDataSource
         return options.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
-        cell.textLabel?.text = options[indexPath.row]
-        return cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
+        cell?.textLabel?.text = options[indexPath.row]
+        return cell!
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         self.revealViewController().revealToggle(animated: true)
         if indexPath.row == 0
         {
-            let categoriesVC = self.loadViewController(identifier: "ProductCategoryVC") as! ProductCategoryVC
+            let categoriesVC = self.loadViewController(identifier: "ProductCategoriesVC") as! ProductCategoriesVC
             (self.revealViewController().frontViewController as! UINavigationController).pushViewController(categoriesVC, animated: true)
         }
         if indexPath.row == 1
@@ -58,5 +58,17 @@ extension MenuViewController : UITableViewDelegate , UITableViewDataSource
              cartVC.isFromMenuSelection = true
             (self.revealViewController().frontViewController as! UINavigationController).pushViewController(cartVC, animated: true)
         }
+        if indexPath.row == 3
+        {
+            let viewOrderVC = self.loadViewController(identifier: "ViewOrdersVC") as! ViewOrdersVC
+            (self.revealViewController().frontViewController as! UINavigationController).pushViewController(viewOrderVC, animated: true)
+        }
+        if indexPath.row == 4
+        {
+            setRootVC("MapViewController")
+            let mapViewController = self.loadViewController(identifier:"MapViewController") as! MapViewController
+            (self.revealViewController().frontViewController as! UINavigationController).pushViewController(mapViewController, animated: true)
+        }
+        
     }
 }

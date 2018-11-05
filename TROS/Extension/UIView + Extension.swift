@@ -29,4 +29,5 @@ extension UIView
         layer.shouldRasterize = true
         layer.rasterizationScale = scale ? UIScreen.main.scale : 1
     }
+    
 }

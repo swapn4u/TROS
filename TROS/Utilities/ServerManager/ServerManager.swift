@@ -13,19 +13,20 @@ enum Result<ValueType, ErrorType> {
     case success(ValueType)
     case failure(ErrorType)
 }
+
 enum ServerError {
     case noError
-    case noInternetConnection(message: String, statusCode: Int)
+    case noInternetConnection()
     case unknownError(message: String, statusCode: Int)
     case requestTimeOut(message: String)
-    case noDataAvailable(message: String)
+    case noDataAvailable()
     
     func getErrorMessage() -> String {
         switch self {
-        case .noInternetConnection(let message, _): return message
+        case .noInternetConnection(): return NO_INTERNET_CONNECTIVITY
         case .unknownError(let message, _): return message
         case .requestTimeOut(let message): return message
-        case .noDataAvailable(let message): return message
+        case .noDataAvailable(): return NO_DATA_AVAILABLE_MSG
         case .noError:
             break
         }
@@ -63,7 +64,41 @@ class ServerManager: NSObject
     
     class func getRequestfor(urlString:String,closure: @escaping (Result<JSON, ServerError>) -> Void)
     {
+        if !CommonUtlity.sharedInstance.isInternetAvailable()
+        {
+            closure(Result.failure(.noInternetConnection()))
+        }
         Alamofire.request(urlString, method: .get, encoding: JSONEncoding.default)
+            .downloadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
+                print("Progress: \(progress.fractionCompleted)")
+            }
+            .validate { request, response, data in
+                
+                return .success
+            }
+            .responseJSON { response in
+                debugPrint(response)
+                switch response.result {
+                case .success:
+                    let resJson = JSON(response.result.value!)
+                    closure(Result.success(resJson))
+                case .failure(let error):
+                    if error._code == NSURLErrorTimedOut {
+                        closure(Result.failure(ServerError.requestTimeOut(message: "Request Time Out")))
+                    }else {
+                        
+                        closure(Result.failure(ServerError.unknownError(message: error.localizedDescription, statusCode: 000)))
+                    }
+                }
+        }
+    }
+    class func getRequestfor(urlString:String,with header : HTTPHeaders, closure: @escaping (Result<JSON, ServerError>) -> Void)
+    {
+        if !CommonUtlity.sharedInstance.isInternetAvailable()
+        {
+            closure(Result.failure(.noInternetConnection()))
+        }
+        Alamofire.request(urlString, method: .get, encoding: JSONEncoding.default,headers:header)
             .downloadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
                 print("Progress: \(progress.fractionCompleted)")
             }
@@ -92,7 +127,6 @@ class ServerManager: NSObject
     
     class func postRequestfor(urlString:String,parameter:[String:Any],closure: @escaping (Result<JSON, ServerError>) -> Void)
     {
-        
         Alamofire.request(urlString, method: .post, parameters: parameter, encoding: JSONEncoding.default,headers:["Content-Type":"application/json"])
             .downloadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
                 print("Progress: \(progress.fractionCompleted)")
@@ -113,6 +147,32 @@ class ServerManager: NSObject
                     }else {
                         
                         closure(Result.failure(ServerError.unknownError(message: error.localizedDescription, statusCode: 000)))
+                    }
+                }
+        }
+    }
+    class func postRequestWith(url:String,parameter:[String:Any],with header:HTTPHeaders, completed:@escaping (Result<JSON, ServerError>) -> Void)
+    {
+        Alamofire.request(url, method: .post, parameters: parameter, encoding: JSONEncoding.default,headers: header)
+            .downloadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
+                print("Progress: \(progress.fractionCompleted)")
+            }
+            .validate { request, response, data in
+                
+                return .success
+            }
+            .responseJSON { response in
+                debugPrint(response)
+                switch response.result {
+                case .success:
+                    let resJson = JSON(response.result.value!)
+                    completed(Result.success(resJson))
+                case .failure(let error):
+                    if error._code == NSURLErrorTimedOut {
+                        completed(Result.failure(ServerError.requestTimeOut(message: "Request Time Out")))
+                    }else {
+                        
+                        completed(Result.failure(ServerError.unknownError(message: error.localizedDescription, statusCode: 000)))
                     }
                 }
         }

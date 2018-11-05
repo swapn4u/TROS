@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SystemConfiguration
 enum leftBarOption
 {
     case search ,cart ,none
@@ -61,7 +62,8 @@ extension UIViewController
         if isSliderAllowed
         {
             let btn2 = UIButton(type: .custom)
-            btn2.setImage(UIImage(named: "sideMenu"), for: .normal)
+            btn2.setImage(UIImage(named: "sideMenu")?.withRenderingMode(.alwaysTemplate), for: .normal)
+            btn2.tintColor = UIColor.white
             btn2.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
             btn2.addTarget(self.revealViewController(), action:#selector(SWRevealViewController.revealToggle(_:)), for: UIControlEvents.touchUpInside)
             item2 = UIBarButtonItem(customView: btn2)
@@ -86,15 +88,17 @@ extension UIViewController
         rightItem1 = UIBarButtonItem(customView: cartBtn)
         
         let searchBtn = UIButton(type: .custom)
-        searchBtn.setImage(UIImage(named: "Search"), for: .normal)
+        searchBtn.setImage(UIImage(named: "Search")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        searchBtn.tintColor = UIColor.white
         searchBtn.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-       // searchBtn.addTarget(self, action: #selector(openSearchWindowOn(_:)), for: UIControlEvents.touchUpInside)
-        rightItem2 = UIBarButtonItem(customView: searchBtn)
-        
-        if self is ProductCategoryVC
+        if let mapViewController = self as? MapViewController
         {
-            self.navigationController?.viewControllers.removeAll()
-            self.navigationController?.viewControllers = [self]
+            searchBtn.addTarget(mapViewController, action: #selector(mapViewController.searchButtonPressed), for: UIControlEvents.touchUpInside)
+        }
+        rightItem2 = UIBarButtonItem(customView: searchBtn)
+        if let productCategoryVC = self as? ProductCategoriesVC
+        {
+            productCategoryVC.navigationItem.setRightBarButtonItems([rightItem1], animated: true)
         }
         
         if let productCategoryDetailsVC = self as? ProductCategoryDetailsVC
@@ -212,6 +216,38 @@ extension UIViewController
             SVProgressHUD.dismiss()
         }
     }
-    
+    func getUserInfo() -> LoginUserDetails?
+    {
+        if let userData = UserDefaults.standard.value(forKey:"UserInfo") as? Data {
+            let userinfo = try? PropertyListDecoder().decode(LoginUserDetails.self, from: userData)
+            return userinfo
+        }
+        return LoginUserDetails(dict: [String : Any]())
+    }
+    func  isInternetActive()->Bool
+    {
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        let defaultRouteReachability = withUnsafePointer(to: &zeroAddress) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {zeroSockAddress in
+                SCNetworkReachabilityCreateWithAddress(nil, zeroSockAddress)
+            }
+        }
+        
+        var flags = SCNetworkReachabilityFlags()
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
+            return false
+        }
+        let isReachable = flags.contains(.reachable)
+        let needsConnection = flags.contains(.connectionRequired)
+        return (isReachable && !needsConnection)
+    }
+    func setRootVC( _ viewController : String)
+    {
+        UserDefaults.standard.set(viewController, forKey: "root")
+    }
+
 }
 

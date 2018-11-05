@@ -50,19 +50,28 @@ class AuthoriseManager: NSObject
                 
         }
     }
-    class func verifyOTP(dict:[String:Any],completed:@escaping(Result<Bool, ServerError>) ->Void)
+    class func verifyOTP(dict:[String:Any],completed:@escaping(Result<String, ServerError>) ->Void)
     {
         let url = BASE_URL + "verifyUserOTP"
         ServerManager.postRequestfor(urlString:url, parameter:dict) { (result) in
             switch(result)
             {
             case .success(let response):
-                guard let isExistingUser = (response.dictionaryObject)?["exists"] as? Bool else {
+                guard let userResponseDict = response.dictionaryObject as? [String:Any] else {
                     completed(.failure(.unknownError(message: "Please Enter Valid Mobile Number", statusCode: 000)))
                     return
                 }
-                completed(.success(isExistingUser))
-                
+                if let otpMsg = userResponseDict["message"] as? String ,otpMsg == "OTP Expired" || otpMsg == "Mobile already exist"
+                {
+                    completed(.success(otpMsg))
+                }
+                else
+                {
+                    let userDatas = LoginUserDetails(dict: userResponseDict)
+                    UserDefaults.standard.set(try? PropertyListEncoder().encode(userDatas), forKey:"UserInfo")
+                   UserDefaults.standard.synchronize()
+                  completed(.success("verified"))
+                }
                 break
             case .failure(let error):
                 completed(.failure(error))
