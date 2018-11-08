@@ -2,7 +2,7 @@
 //  OrderData+CoreDataProperties.swift
 //  
 //
-//  Created by Swapnil Katkar on 31/10/18.
+//  Created by Swapnil Katkar on 08/11/18.
 //
 //
 
@@ -17,5 +17,6 @@ extension OrderData {
     }
 
     @NSManaged public var orderId: String?
+    @NSManaged public var userId: String?
 
 }

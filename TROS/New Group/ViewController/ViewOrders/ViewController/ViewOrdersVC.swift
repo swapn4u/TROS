@@ -18,6 +18,8 @@ class ViewOrdersVC: UIViewController {
         super.viewDidLoad()
         tableView.register(UINib(nibName: "viewOrderHeaderCell", bundle: nil), forCellReuseIdentifier: "viewOrderHeaderCell")
         getOrderDetails()
+        tableView.estimatedRowHeight = 246
+        tableView.rowHeight = UITableViewAutomaticDimension
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
@@ -36,11 +38,12 @@ extension ViewOrdersVC : UITableViewDataSource,UITableViewDelegate
         cell.deliveryAddress.text = productDetails.address.line1 + productDetails.address.line2 + productDetails.address.line3
         cell.totalProducts.text = "\(productDetails.items.count)"
         cell.paymentMode.text = productDetails.payment.method == "cash" ? "Cash on Delivery" : "Online Paid"
-        cell.orderStausLabel.text = productDetails.items.last?.history.last?.eventMessage ?? ""
+        cell.orderStausLabel.text = productDetails.items.last?.history.last?.eventMessage.capitalized ?? ""
         cell.ratingOrderView.delegate = self
         cell.ratingOrderView.tag = indexPath.row
         cell.ratingOrderView.type = .halfRatings
         cell.ratingOrderView.rating = productDetails.rating
+        cell.totalAmount.text = "₹ : \(productDetails.items.map{$0.cost}.reduce(0, +))"
         if productDetails.items.last!.status == 5 || productDetails.items.last!.status == 6
         {
            cell.cencelOrderButton.isHidden = true
@@ -58,7 +61,7 @@ extension ViewOrdersVC : UITableViewDataSource,UITableViewDelegate
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 246
+        return UITableViewAutomaticDimension
     }
 }
 extension ViewOrdersVC

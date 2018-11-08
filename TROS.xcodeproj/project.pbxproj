@@ -58,6 +58,8 @@
 		189459302178A30600E42684 /* CartData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1894592E2178A30600E42684 /* CartData+CoreDataClass.swift */; };
 		189459362178A8FC00E42684 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189459332178A8FB00E42684 /* CoreDataManager.swift */; };
 		189459392178AD2C00E42684 /* CartData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189459382178AD2C00E42684 /* CartData+CoreDataProperties.swift */; };
+		18967A3821929F0400542EBE /* PromocodeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18967A3721929F0400542EBE /* PromocodeManager.swift */; };
+		18967A3B21929F2500542EBE /* Promocode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18967A3A21929F2500542EBE /* Promocode.swift */; };
 		18B05B49218AF03B008C8AE7 /* FloatRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B05B48218AF03B008C8AE7 /* FloatRatingView.swift */; };
 		18B05B4D218B0B4E008C8AE7 /* ProductCategoriesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B05B4C218B0B4E008C8AE7 /* ProductCategoriesVC.swift */; };
 		18BA292E2189E7EF00B8D9A9 /* UserVerificationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BA292D2189E7EF00B8D9A9 /* UserVerificationVC.swift */; };
@@ -147,6 +149,8 @@
 		1894592E2178A30600E42684 /* CartData+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CartData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		189459332178A8FB00E42684 /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		189459382178AD2C00E42684 /* CartData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CartData+CoreDataProperties.swift"; path = "/Users/apple/Desktop/Swapnil/TROS/TROS/Utilities/DataBase/CartData+CoreDataProperties.swift"; sourceTree = "<absolute>"; };
+		18967A3721929F0400542EBE /* PromocodeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromocodeManager.swift; sourceTree = "<group>"; };
+		18967A3A21929F2500542EBE /* Promocode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promocode.swift; sourceTree = "<group>"; };
 		18B05B48218AF03B008C8AE7 /* FloatRatingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatRatingView.swift; sourceTree = "<group>"; };
 		18B05B4C218B0B4E008C8AE7 /* ProductCategoriesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductCategoriesVC.swift; sourceTree = "<group>"; };
 		18BA292D2189E7EF00B8D9A9 /* UserVerificationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserVerificationVC.swift; sourceTree = "<group>"; };
@@ -547,6 +551,8 @@
 		18806A3C218ECCCD00B201F9 /* PromocodeVc */ = {
 			isa = PBXGroup;
 			children = (
+				18967A3921929F0900542EBE /* DataModel */,
+				18967A3621929EE200542EBE /* ServiceManagar */,
 				18806A3F218ECD0700B201F9 /* ViewController */,
 			);
 			path = PromocodeVc;
@@ -594,6 +600,22 @@
 				18BA292F2189F2A500B8D9A9 /* ViewOrederManager.swift */,
 			);
 			path = ServiceModel;
+			sourceTree = "<group>";
+		};
+		18967A3621929EE200542EBE /* ServiceManagar */ = {
+			isa = PBXGroup;
+			children = (
+				18967A3721929F0400542EBE /* PromocodeManager.swift */,
+			);
+			path = ServiceManagar;
+			sourceTree = "<group>";
+		};
+		18967A3921929F0900542EBE /* DataModel */ = {
+			isa = PBXGroup;
+			children = (
+				18967A3A21929F2500542EBE /* Promocode.swift */,
+			);
+			path = DataModel;
 			sourceTree = "<group>";
 		};
 		18B05B47218AF012008C8AE7 /* Rating */ = {
@@ -836,6 +858,7 @@
 				1852D7C920DC00F000D77A3A /* AppDelegate.swift in Sources */,
 				18BA29302189F2A500B8D9A9 /* ViewOrederManager.swift in Sources */,
 				187A7660218B50DA00DAD198 /* CommonUtlity.swift in Sources */,
+				18967A3821929F0400542EBE /* PromocodeManager.swift in Sources */,
 				180DC86A21786145006D2B54 /* SVRadialGradientLayer.m in Sources */,
 				18C5D2DC217F813C007368F4 /* UserDataModel.swift in Sources */,
 				180DC86E21786145006D2B54 /* SVProgressHUD.m in Sources */,
@@ -851,6 +874,7 @@
 				180DC8572178338F006D2B54 /* ProductCategoriesListManager.swift in Sources */,
 				1852D82A20DC11A700D77A3A /* ViewController+Extension.swift in Sources */,
 				180DC86D21786145006D2B54 /* SVIndefiniteAnimatedView.m in Sources */,
+				18967A3B21929F2500542EBE /* Promocode.swift in Sources */,
 				1852D81E20DC112C00D77A3A /* SWRevealViewController.m in Sources */,
 				18B05B4D218B0B4E008C8AE7 /* ProductCategoriesVC.swift in Sources */,
 				186CF53D218CA656001FAD57 /* ViewOrderProductDetailsVC.swift in Sources */,

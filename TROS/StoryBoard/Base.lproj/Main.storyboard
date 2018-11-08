@@ -777,7 +777,7 @@
                                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jrE-wq-66P">
                                                     <rect key="frame" x="8" y="5" width="359" height="199.5"/>
                                                     <subviews>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="product" translatesAutoresizingMaskIntoConstraints="NO" id="dcA-sH-lOx">
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="product" translatesAutoresizingMaskIntoConstraints="NO" id="dcA-sH-lOx">
                                                             <rect key="frame" x="16" y="20" width="80" height="80"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="80" id="2Kk-We-vks"/>
@@ -1328,7 +1328,7 @@
                                                                                 </label>
                                                                             </subviews>
                                                                         </stackView>
-                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="product" translatesAutoresizingMaskIntoConstraints="NO" id="ldp-GN-YPV">
+                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="product" translatesAutoresizingMaskIntoConstraints="NO" id="ldp-GN-YPV">
                                                                             <rect key="frame" x="8" y="10" width="70" height="70"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" constant="70" id="1pL-YV-lM0"/>
@@ -1501,7 +1501,7 @@
                                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Free" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ff8-jS-4id">
                                                                                         <rect key="frame" x="176.5" y="0.0" width="176.5" height="4"/>
                                                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="13"/>
-                                                                                        <nil key="textColor"/>
+                                                                                        <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                                         <nil key="highlightedColor"/>
                                                                                     </label>
                                                                                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z3a-qG-fTv">
@@ -1554,10 +1554,10 @@
                                                                                         <nil key="textColor"/>
                                                                                         <nil key="highlightedColor"/>
                                                                                     </label>
-                                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Free" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ykZ-3B-UT8">
+                                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" Free" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ykZ-3B-UT8">
                                                                                         <rect key="frame" x="176.5" y="0.0" width="176.5" height="17.5"/>
                                                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="13"/>
-                                                                                        <nil key="textColor"/>
+                                                                                        <color key="textColor" red="0.0" green="0.62745098040000002" blue="0.52549019610000003" alpha="1" colorSpace="calibratedRGB"/>
                                                                                         <nil key="highlightedColor"/>
                                                                                     </label>
                                                                                 </subviews>
@@ -1985,7 +1985,6 @@
                         <outlet property="addressEditVIew" destination="MoS-Ad-OND" id="7Vy-Yn-JOZ"/>
                         <outlet property="contactNameLabel" destination="3xi-e3-der" id="ccc-76-Bsl"/>
                         <outlet property="customerName" destination="41I-N0-pcB" id="zpu-lY-vea"/>
-                        <outlet property="delivaryCharge" destination="Ff8-jS-4id" id="LOk-w9-3nn"/>
                         <outlet property="editAddressContainerView" destination="PMe-gH-gdu" id="Au0-pn-SAx"/>
                         <outlet property="editAdressTF" destination="7H8-YG-4No" id="VOj-k2-8wB"/>
                         <outlet property="editContactNoTF" destination="fTc-9C-Gdq" id="4dM-Ab-cxI"/>
@@ -1993,6 +1992,7 @@
                         <outlet property="estimatedPrice" destination="Qi1-vL-zRH" id="Hvl-6c-zw5"/>
                         <outlet property="placeOrderTableView" destination="BQR-oe-6fv" id="e34-oN-cpr"/>
                         <outlet property="promocodeAmount" destination="Ff8-jS-4id" id="wGG-fy-fjc"/>
+                        <outlet property="promocodeDiscountStatus" destination="u6c-5P-FIp" id="feg-is-c7y"/>
                         <outlet property="promocodeHolder" destination="fbL-LM-CyQ" id="MHZ-Wq-cwP"/>
                         <outlet property="tableHeightConstraints" destination="yYl-iU-kc2" id="hkL-pk-PFQ"/>
                         <outlet property="totalCost" destination="uFX-in-1Fk" id="UFj-6B-CkJ"/>
@@ -2056,7 +2056,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="promocode" translatesAutoresizingMaskIntoConstraints="NO" id="W3h-1L-y0l">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PromoFrame" translatesAutoresizingMaskIntoConstraints="NO" id="W3h-1L-y0l">
                                         <rect key="frame" x="52.5" y="62" width="194" height="68"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="194" id="9Rr-KS-4MB"/>
@@ -2149,8 +2149,8 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="55" id="o4V-99-Mcv"/>
                                 </constraints>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="19"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                         </subviews>
@@ -2164,6 +2164,10 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="GxN-EB-rdr"/>
                     </view>
+                    <connections>
+                        <outlet property="dicountLabel" destination="7La-DU-Voi" id="fc1-xv-J0L"/>
+                        <outlet property="promoCodeTF" destination="qKi-My-5PX" id="126-Gm-cug"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sLX-op-MOJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -3174,10 +3178,10 @@
     </scenes>
     <resources>
         <image name="No_Network" width="256" height="256"/>
+        <image name="PromoFrame" width="391" height="172"/>
         <image name="offer" width="100" height="101"/>
         <image name="pizzaOffer" width="1762" height="990"/>
         <image name="product" width="310" height="326"/>
-        <image name="promocode" width="290" height="174"/>
         <image name="radio_unselected" width="64" height="64"/>
         <image name="selected" width="64" height="64"/>
         <image name="user" width="64" height="64"/>

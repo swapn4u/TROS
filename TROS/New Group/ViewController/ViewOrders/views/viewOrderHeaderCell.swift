@@ -19,6 +19,7 @@ class viewOrderHeaderCell: UITableViewCell {
     @IBOutlet weak var cencelOrderButton: UIButton!
     @IBOutlet weak var ratingOrderView: FloatRatingView!
     @IBOutlet weak var shoeDetailsButton: UIButton!
+    @IBOutlet weak var totalAmount: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

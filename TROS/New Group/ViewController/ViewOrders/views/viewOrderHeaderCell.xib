@@ -19,7 +19,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="244.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="25S-C1-nwe">
+                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="25S-C1-nwe">
                         <rect key="frame" x="8" y="8" width="304" height="208"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="tHL-rq-H1V">
@@ -58,13 +58,13 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="N.M.Joshi Marge" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="huf-Cn-AZp">
-                                        <rect key="frame" x="0.0" y="48.5" width="296" height="51"/>
+                                        <rect key="frame" x="0.0" y="48.5" width="296" height="28.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fcK-C5-CeZ">
-                                        <rect key="frame" x="0.0" y="101.5" width="296" height="20.5"/>
+                                        <rect key="frame" x="0.0" y="79" width="296" height="20.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total Products  :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HIb-FR-NYA">
                                                 <rect key="frame" x="0.0" y="0.0" width="120" height="20.5"/>
@@ -84,6 +84,29 @@
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="20" id="Gca-qr-tXG"/>
+                                        </constraints>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AmS-zc-v6h">
+                                        <rect key="frame" x="0.0" y="101.5" width="296" height="20.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Amount Payable  :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V0x-ph-DRl">
+                                                <rect key="frame" x="0.0" y="0.0" width="120" height="20.5"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="120" id="NrC-gP-HNo"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dBN-8i-tye">
+                                                <rect key="frame" x="120" y="0.0" width="176" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="oun-ei-bCe"/>
                                         </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="i8j-t4-cug">
@@ -200,8 +223,8 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="tHL-rq-H1V" secondAttribute="bottom" constant="4" id="0ny-gK-Bph"/>
-                            <constraint firstAttribute="height" constant="210" id="B6F-D8-Whz"/>
+                            <constraint firstAttribute="bottom" secondItem="tHL-rq-H1V" secondAttribute="bottom" constant="2" id="0ny-gK-Bph"/>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="208" id="B6F-D8-Whz"/>
                             <constraint firstItem="tHL-rq-H1V" firstAttribute="leading" secondItem="25S-C1-nwe" secondAttribute="leading" constant="4" id="N9Y-tf-azm"/>
                             <constraint firstAttribute="trailing" secondItem="tHL-rq-H1V" secondAttribute="trailing" constant="4" id="ThD-FQ-15R"/>
                             <constraint firstItem="tHL-rq-H1V" firstAttribute="top" secondItem="25S-C1-nwe" secondAttribute="top" constant="4" id="eSp-Gw-hSD"/>
@@ -233,7 +256,7 @@
                     <constraint firstItem="sKz-4W-K3b" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="P81-lq-Eoz"/>
                     <constraint firstAttribute="bottom" secondItem="sKz-4W-K3b" secondAttribute="bottom" constant="2" id="ZbS-sr-O8Y"/>
                     <constraint firstItem="25S-C1-nwe" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="c62-fp-aSk"/>
-                    <constraint firstItem="sKz-4W-K3b" firstAttribute="top" secondItem="25S-C1-nwe" secondAttribute="bottom" constant="1" id="jvz-wp-7WT"/>
+                    <constraint firstItem="sKz-4W-K3b" firstAttribute="top" secondItem="25S-C1-nwe" secondAttribute="bottom" constant="3" id="jvz-wp-7WT"/>
                     <constraint firstAttribute="trailing" secondItem="25S-C1-nwe" secondAttribute="trailing" constant="8" id="o40-mO-jip"/>
                 </constraints>
             </tableViewCellContentView>
@@ -248,6 +271,7 @@
                 <outlet property="providerNmae" destination="kp2-zu-S2U" id="G0i-nP-4pb"/>
                 <outlet property="ratingOrderView" destination="7X0-fO-wf3" id="TNr-ys-kYp"/>
                 <outlet property="shoeDetailsButton" destination="sKz-4W-K3b" id="LB1-k1-Iod"/>
+                <outlet property="totalAmount" destination="dBN-8i-tye" id="L8Z-t8-V2K"/>
                 <outlet property="totalProducts" destination="LHO-up-ova" id="u9L-HE-Dk1"/>
             </connections>
             <point key="canvasLocation" x="34" y="154.5"/>

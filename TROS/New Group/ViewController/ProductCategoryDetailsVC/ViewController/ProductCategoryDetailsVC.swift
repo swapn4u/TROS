@@ -55,9 +55,7 @@ class ProductCategoryDetailsVC: UIViewController {
         self.commonFilter.removeAll()
         self.commonFilter = self.productList
         }
-        
     }
-    
     
 }
 extension ProductCategoryDetailsVC:UITableViewDataSource,UITableViewDelegate
@@ -98,14 +96,23 @@ extension ProductCategoryDetailsVC:UITableViewDataSource,UITableViewDelegate
 extension ProductCategoryDetailsVC : UISearchBarDelegate
 {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
-        if searchBar.text!.isEmpty
+        if !isInternetActive()
         {
-            showAlertFor(title: "Products", description: "Enter search text to proceed .")
+            //            loadErrorViewOn(subview: self.productTableView, forAlertType: .NoInternetConnection, errorMessage: NO_INTERNET_CONNECTIVITY) {
+            //                self.searchBarSearchButtonClicked(searchBar)
+            showAlertFor(title: "Search Products", description: NO_INTERNET_CONNECTIVITY)
+            //            }
         }
-        else
-        {
-             getSearchProductWithText(_searchText: searchBar.text ?? "")
+        else{
+            searchBar.resignFirstResponder()
+            if searchBar.text!.isEmpty
+            {
+                showAlertFor(title: "Search Products", description: "Enter search text to proceed .")
+            }
+            else
+            {
+                getSearchProductWithText(_searchText: searchBar.text ?? "")
+            }
         }
     }
      func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
@@ -139,46 +146,69 @@ extension ProductCategoryDetailsVC
     }
     @objc func openSearchBar()
     {
-        UIView.animate(withDuration: 0.5) {
-            self.searchBarView.isHidden = false
-            self.isSearchBarHide = false
+        if !isInternetActive()
+        {
+            showAlertFor(title: "Search Products", description: NO_INTERNET_CONNECTIVITY)
+        }
+        else
+        {
+            UIView.animate(withDuration: 0.5) {
+                self.searchBarView.isHidden = false
+                self.isSearchBarHide = false
+            }
         }
     }
     func getSearchProductWithText(_searchText : String)
     {
-        showLoaderWith(Msg: "Loading Products ...")
-        ProductCategoriesListManager.getSearchResultFor(searchText:_searchText , category: productId, completed: { (response) in
-            switch response
-            {
-            case .success(let productList):
-                self.commonFilter.removeAll()
-               self.isProductsFinished = productList.isEmpty
-                if productList.isEmpty
+        if !isInternetActive()
+        {
+            showAlertFor(title: "Search Products", description: NO_INTERNET_CONNECTIVITY)
+        }
+        else
+        {
+            showLoaderWith(Msg: "Searching Products ...")
+            ProductCategoriesListManager.getSearchResultFor(searchText:_searchText , category: productId, completed: { (response) in
+                switch response
                 {
-                    self.showAlertFor(title: "Products", description: "No Product Found")
+                case .success(let productList):
+                    self.commonFilter.removeAll()
+                    self.isProductsFinished = productList.isEmpty
+                    if productList.isEmpty
+                    {
+                        self.showAlertFor(title: "Products", description: "Opps..No Product Found,We Make Available for You Soon")
+                    }
+                    else
+                    {
+                        self.commonFilter += productList
+                    }
+                    self.dismissLoader()
+                    
+                case .failure:
+                    self.showAlertFor(title: "Products", description: "Opps..No Product Found,We Make Available for You Soon")
+                    self.dismissLoader()
                 }
-                else
-                {
-                      self.commonFilter += productList
-                }
-                self.dismissLoader()
-                
-            case .failure:
-                self.showAlertFor(title: "Products", description: "No Product Found")
-                self.dismissLoader()
-            }
-        })
+            })
+        }
     }
    @objc func addToCartPressed(sender:UIButton)
+   {
+    showLoaderWith(Msg: "saving product in cart ...")
+    let isProductAddeddToCart =  CoreDataManager.manager.isProductAddedInCart(productId:self.commonFilter[sender.tag].id)
+    if isProductAddeddToCart
     {
-        showLoaderWith(Msg: "saving product in cart ...")
+        self.dismissLoader()
+        self.showAlertFor(title: "Add to Cart", description: "Product already added in cart")
+    }
+    else
+    {
         CoreDataManager.manager.saveData(recordDict: self.commonFilter[sender.tag]) { (isSucess) in
             self.dismissLoader()
             if isSucess
             {
-               self.showAlertFor(title: "Add to Cart", description: "Product added succesfully in cart")
+                self.showAlertFor(title: "Add to Cart", description: "Product added succesfully in cart")
             }
         }
+    }
     }
 }
 

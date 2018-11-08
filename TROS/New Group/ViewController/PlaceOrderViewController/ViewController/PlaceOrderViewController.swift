@@ -30,6 +30,7 @@ class PlaceOrderViewController: UIViewController {
     @IBOutlet weak var editNameTF: UITextField!
     @IBOutlet weak var estimatedPrice: UILabel!
     
+    @IBOutlet weak var promocodeDiscountStatus: UILabel!
     @IBOutlet weak var promocodeHolder: UIView!
     @IBOutlet weak var promocodeAmount: UILabel!
     
@@ -65,6 +66,7 @@ class PlaceOrderViewController: UIViewController {
     @IBAction func ApplyPromodePressed(_ sender: UIButton)
     {
         let promocodeVC = self.loadViewController(identifier:"PromocodeVC") as! PromocodeVC
+        promocodeVC.getCashBackDelegate = self
         self.present(promocodeVC, animated: true)
     }
     @IBAction func ChangeAddressPressed(_ sender: UIButton)
@@ -75,67 +77,73 @@ class PlaceOrderViewController: UIViewController {
     }
     @IBAction func PlaceOderPressed(_ sender: Any)
     {
-        for imageView in paymentOptionImageView
+        if !isInternetActive()
         {
-            if imageView.tag == 1 && imageView.image == #imageLiteral(resourceName: "selected")
+            showAlertFor(title: "Place Order", description: NO_INTERNET_CONNECTIVITY)
+        }
+        else
+        {
+            for imageView in paymentOptionImageView
             {
-                let paymetAlert =  UIAlertController(title: "Payment Mode", message: "Do You Confirm to Pay On delivary", preferredStyle: .alert)
-                let OkAction = UIAlertAction(title: "Yes", style: .default) { (alert) in
-                    self.showLoaderWith(Msg: "Please wait while placing the order ...")
-                    let dict = ["id":"","amount":"\(Double((self.estimatedPrice.text ?? "").replacingOccurrences(of:" ₹ : " , with: "")) ?? 0.0)","method":"cash","providerName":"tros"] as [String : Any]
-                    PlaceOrderManager.getPaymentIdFor(dict: dict, header: ["Content-Type":"application/json","authorization":self.getUserInfo()?.token ?? ""], completed: { (result) in
-                        switch result
-                        {
-                        case .success(let paymentInfo):
-                        self.placeOrder(productId: paymentInfo.paymrntId)
-                        
-                        case .failure(let error):
-                        self.dismissLoader()
-                        switch error {
-                        case .noInternetConnection :
-                        self.loadErrorViewOn(subview: self.view, forAlertType: .NoInternetConnection, errorMessage: NO_INTERNET_CONNECTIVITY, retryButtonAction: {
+                if imageView.tag == 1 && imageView.image == #imageLiteral(resourceName: "selected")
+                {
+                    let paymetAlert =  UIAlertController(title: "Payment Mode", message: "Do You Confirm to Pay On delivary", preferredStyle: .alert)
+                    let OkAction = UIAlertAction(title: "Yes", style: .default) { (alert) in
+                        self.showLoaderWith(Msg: "Please wait while placing the order ...")
+                        let dict = ["id":"","amount":"\(Double((self.estimatedPrice.text ?? "").replacingOccurrences(of:" ₹ : " , with: "")) ?? 0.0)","method":"cash","providerName":"tros"] as [String : Any]
+                        PlaceOrderManager.getPaymentIdFor(dict: dict, header: ["Content-Type":"application/json","authorization":self.getUserInfo()?.token ?? ""], completed: { (result) in
+                            switch result
+                            {
+                            case .success(let paymentInfo):
+                                self.placeOrder(productId: paymentInfo.paymrntId)
+                                
+                            case .failure(let error):
+                                self.dismissLoader()
+                                switch error {
+                                case .noInternetConnection :
+                                    self.loadErrorViewOn(subview: self.view, forAlertType: .NoInternetConnection, errorMessage: NO_INTERNET_CONNECTIVITY, retryButtonAction: {
+                                    })
+                                case .noDataAvailable:
+                                    self.loadErrorViewOn(subview: self.view, forAlertType: .NoDataAvailable, errorMessage: NO_DATA_AVAILABLE_MSG, retryButtonAction: {
+                                    })
+                                    
+                                default:
+                                    self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                                }
+                            }
                         })
-                        case .noDataAvailable:
-                        self.loadErrorViewOn(subview: self.view, forAlertType: .NoDataAvailable, errorMessage: NO_DATA_AVAILABLE_MSG, retryButtonAction: {
-                        })
                         
-                        default:
-                        self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
-                        }
                     }
-                    })
+                    let cancelAction = UIAlertAction(title: "No", style: .destructive)
+                    
+                    paymetAlert.addAction(OkAction)
+                    paymetAlert.addAction(cancelAction)
+                    self.present(paymetAlert, animated: true, completion: nil)
+                }
+                else if imageView.tag == 1 && imageView.image == #imageLiteral(resourceName: "radio_unselected")
+                {
+                    let image = #imageLiteral(resourceName: "trosIcon")
+                    let amount = (Double((estimatedPrice.text ?? "").replacingOccurrences(of:" ₹ : " , with: "")) ?? 0.0) * 100.0
+                    let options: [String:Any] = [
+                        "amount" :  amount,
+                        "description": "purchase products",
+                        "currency" : "INR",
+                        // "external" : ["wallets" : ["paytm" ]],
+                        "image": image ,
+                        "name": "TROS",
+                        "prefill": [
+                            "contact": "8007415573",
+                            "email": "swapnilkatkar1992@gmail.com"
+                        ],
+                        "theme": [
+                            "color": "#800000"
+                        ]
+                    ]
+                    razorpay.open(options)
                     
                 }
-                let cancelAction = UIAlertAction(title: "No", style: .destructive)
-                
-                paymetAlert.addAction(OkAction)
-                paymetAlert.addAction(cancelAction)
-                self.present(paymetAlert, animated: true, completion: nil)
-            }
-            else if imageView.tag == 1 && imageView.image == #imageLiteral(resourceName: "radio_unselected")
-            {
-                let image = #imageLiteral(resourceName: "trosIcon")
-                let amount = (Double((estimatedPrice.text ?? "").replacingOccurrences(of:" ₹ : " , with: "")) ?? 0.0) * 100.0
-                let options: [String:Any] = [
-                    "amount" :  amount,
-                    "description": "purchase products",
-                    "currency" : "INR",
-                    // "external" : ["wallets" : ["paytm" ]],
-                    "image": image ,
-                    "name": "TROS",
-                    "prefill": [
-                        "contact": "8007415573",
-                        "email": "swapnilkatkar1992@gmail.com"
-                    ],
-                    "theme": [
-                        "color": "#800000"
-                    ]
-                ]
-                razorpay.open(options)
-                
             }
         }
-       
     }
     @IBAction func editAddressPressed(_ sender: UIButton)
     {
@@ -206,7 +214,7 @@ extension PlaceOrderViewController : UITableViewDelegate,UITableViewDataSource
         tableHeightConstraints.constant = CGFloat(productOrder.count * 94)
         let priceStruct = productOrder.last
         totalCost.text = priceStruct?.totalCost ?? "-"
-        totalItem.text = "\(productOrder.map{Int($0.totalProducts) ?? 0}.reduce(0, +))" 
+        totalItem.text = " \(productOrder.map{Int($0.totalProducts) ?? 0}.reduce(0, +))" 
         estimatedPrice.text = priceStruct?.totalCost ?? "-"
     }
 }
@@ -299,5 +307,21 @@ extension PlaceOrderViewController : RazorpayPaymentCompletionProtocol , Externa
         })
     }
     
+}
+extension PlaceOrderViewController : getCashBackDelegate
+{
+    func getCashback(discunt: Int) {
+        if discunt>0
+        {
+            UIView.animate(withDuration: 0.3) {
+                self.promocodeHolder.isHidden=false
+                self.promocodeDiscountStatus.text = "PromoCode(\(discunt)% OFF)"
+                let dicountPrice = String(format: "%.2f",(Double(self.totalCost.text!.replacingOccurrences(of: " ₹ : ", with: ""))! * Double(discunt) / 100.0))
+                self.promocodeAmount.text = " ₹ : - \(dicountPrice)"
+                self.estimatedPrice.text = " ₹ : " + String(format: "%.2f",Double(self.estimatedPrice.text!.replacingOccurrences(of: " ₹ : ", with: ""))! - Double(dicountPrice)!)
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
 }
 

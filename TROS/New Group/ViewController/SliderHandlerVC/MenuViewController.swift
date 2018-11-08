@@ -19,7 +19,7 @@ class MenuViewController: UIViewController {
     @IBOutlet weak var profileView: UIView!
     
     @IBOutlet weak var menuListTableView: UITableView!
-    let options = ["Home","Change Location","My Cart","My Orders","Loggout"]//"Notification","Share App","My Account","Login/Sign up"]
+    let options = ["Home","Change Location","My Cart","My Orders","Log Out"]//"Notification","Share App","My Account","Login/Sign up"]
     override func viewDidLoad() {
         super.viewDidLoad()
         nameLabel.text = getValueFor(key: "name")
@@ -65,9 +65,12 @@ extension MenuViewController : UITableViewDelegate , UITableViewDataSource
         }
         if indexPath.row == 4
         {
-            setRootVC("MapViewController")
-            let mapViewController = self.loadViewController(identifier:"MapViewController") as! MapViewController
-            (self.revealViewController().frontViewController as! UINavigationController).pushViewController(mapViewController, animated: true)
+            //CoreDataManager.manager.deleteAllOrderIds { (completed) in
+                self.setRootVC("MapViewController")
+                let mapViewController = self.loadViewController(identifier:"MapViewController") as! MapViewController
+                (self.revealViewController().frontViewController as! UINavigationController).pushViewController(mapViewController, animated: true)
+           // }
+            
         }
         
     }

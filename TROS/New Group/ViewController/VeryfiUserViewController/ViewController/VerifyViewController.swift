@@ -37,6 +37,26 @@ class VerifyViewController: UIViewController {
    
     @IBAction func SubmitButtenPressed(_ sender: UIButton)
     {
+        if (nameLabel.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)!
+        {
+            showAlertFor(title: "Verification", description: "Please Enter Full Name.")
+            return
+        }
+        if (emailID.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)!
+        {
+            showAlertFor(title: "Verification", description: "Please Enter Email id .")
+            return
+        }
+        if (mobileNoLabel.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)!
+        {
+            showAlertFor(title: "Verification", description: "Please Enter Valid Mobile Number.")
+            return
+        }
+        if (enterOTPLabel.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)!
+        {
+            showAlertFor(title: "Verification", description: "Please verify OTP .")
+            return
+        }
         let categoryVC = self.loadViewController(identifier: "ProductCategoriesVC") as! ProductCategoriesVC
         saveRecord(value: nameLabel.text!, forKey: "name")
         saveRecord(value: mobileNoLabel.text!, forKey: "mobileNo")
@@ -48,59 +68,85 @@ class VerifyViewController: UIViewController {
     
     @IBAction func getOtpPressed(_ sender: UIButton)
     {
-        self.showLoaderWith(Msg: "sendimg OTP ..")
-        AuthoriseManager.verifyMobile(dict: ["mobile"
-            : mobileNoLabel.text ?? "","dialCode" : countryCode.text ?? "+91"]) { (response) in
-            switch response
-            {
-            case .success(let resultMsg):
-                self.dismissLoader()
-                UIView.animate(withDuration: 1.0, animations: {
-                self.otpView.alpha = 1
-                self.enterOTPLabel.becomeFirstResponder()
-                }, completion: { (sucess) in
-                     self.showAlertFor(title: "Generate OTP", description: resultMsg)
-                })
-                
-            case .failure(let error):
-                self.dismissLoader()
-                switch error {
-                case .unknownError( _,_) :
-                    self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
-                default:
-                    self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
-                }
+        if !CommonUtlity.sharedInstance.isInternetAvailable()
+        {
+            showAlertFor(title: "Verification", description: NO_INTERNET_CONNECTIVITY)
+            return
+        }
+        else
+        {
+            self.showLoaderWith(Msg: "sendimg OTP ..")
+            AuthoriseManager.verifyMobile(dict: ["mobile"
+                : mobileNoLabel.text ?? "","dialCode" : countryCode.text ?? "+91"]) { (response) in
+                    switch response
+                    {
+                    case .success(let resultMsg):
+                        self.dismissLoader()
+                        UIView.animate(withDuration: 1.0, animations: {
+                            self.otpView.alpha = 1
+                            self.enterOTPLabel.becomeFirstResponder()
+                        }, completion: { (sucess) in
+                            self.showAlertFor(title: "Generate OTP", description: resultMsg)
+                        })
+                        
+                    case .failure(let error):
+                        self.dismissLoader()
+                        switch error {
+                        case .unknownError( _,_) :
+                            self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
+                        default:
+                            self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                        }
+                    }
             }
-            
         }
     }
     @IBAction func verifyOTPPressed(_ sender: UIButton)
     {
-        self.showLoaderWith(Msg: "Verifing User...")
-        AuthoriseManager.verifyUser(dict: ["mobile":mobileNoLabel.text ?? "","dialCode" : countryCode.text ?? "+91"]) { (response) in
-            switch response
-            {
-            case .success(let isExistingUser):
-                self.dismissLoader()
-                self.showLoaderWith(Msg: "Verifing OTP...")
-               let nameArr = (self.nameLabel.text ?? "").split(separator: " ")
-               let firstName =  nameArr.first ?? ""
-               let lastName = nameArr.count > 1 ? nameArr.last! : ""
-                var dict = [String:Any]()
-                if !isExistingUser
-                {
-                    dict = ["isNew":true,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName , "lastName": lastName,"displayName":firstName,"versionCode":"160000001"]
-                }
-                else
-                {
-                    dict = ["isNew":false,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"versionCode":"160000001"]
-                }
-               AuthoriseManager.verifyOTP(dict: dict, completed: { (response) in
+        if !CommonUtlity.sharedInstance.isInternetAvailable()
+        {
+            showAlertFor(title: "Verification", description: NO_INTERNET_CONNECTIVITY)
+            return
+        }
+        else
+        {
+            self.showLoaderWith(Msg: "Verifing User...")
+            AuthoriseManager.verifyUser(dict: ["mobile":mobileNoLabel.text ?? "","dialCode" : countryCode.text ?? "+91"]) { (response) in
                 switch response
                 {
-                case .success(let resultMsg):
+                case .success(let isExistingUser):
                     self.dismissLoader()
-                    print(resultMsg)
+                    self.showLoaderWith(Msg: "Verifing OTP...")
+                    let nameArr = (self.nameLabel.text ?? "").split(separator: " ")
+                    let firstName =  nameArr.first ?? ""
+                    let lastName = nameArr.count > 1 ? nameArr.last! : ""
+                    var dict = [String:Any]()
+                    if !isExistingUser
+                    {
+                        dict = ["isNew":true,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName , "lastName": lastName,"displayName":firstName,"versionCode":"160000001"]
+                    }
+                    else
+                    {
+                        dict = ["isNew":false,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"versionCode":"160000001"]
+                    }
+                    AuthoriseManager.verifyOTP(dict: dict, completed: { (response) in
+                        switch response
+                        {
+                        case .success(let resultMsg):
+                            self.dismissLoader()
+                            print(resultMsg)
+                            
+                        case .failure(let error):
+                            self.dismissLoader()
+                            switch error {
+                            case .unknownError( _,_) :
+                                self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
+                            default:
+                                self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                            }
+                        }
+                        
+                    })
                     
                 case .failure(let error):
                     self.dismissLoader()
@@ -110,17 +156,6 @@ class VerifyViewController: UIViewController {
                     default:
                         self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
                     }
-                }
-                
-               })
-                
-            case .failure(let error):
-                self.dismissLoader()
-                switch error {
-                case .unknownError( _,_) :
-                    self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
-                default:
-                    self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
                 }
             }
             

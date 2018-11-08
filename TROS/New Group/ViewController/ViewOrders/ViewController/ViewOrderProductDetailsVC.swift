@@ -29,7 +29,7 @@ extension ViewOrderProductDetailsVC : UITableViewDataSource,UITableViewDelegate
                 let productDetails = orderDetails.items[indexPath.row]
                 cell.productName.text = productDetails.productName
                // cell.brandName.text = productDetails.vendorName
-                cell.totalPrice.text = "\(productDetails.cost)"
+                cell.totalPrice.text = "₹ : \(productDetails.cost)"
                 cell.productImage.sd_setImage(with: URL(string: productDetails.imageUrl), placeholderImage: UIImage(named: PlaceholderImage))
                 cell.orederQuantity.text = "\(productDetails.count)"
                // cell.orderSatus.text = productDetails.history.last?.eventMessage ?? ""

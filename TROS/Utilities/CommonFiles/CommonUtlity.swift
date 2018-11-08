@@ -31,5 +31,13 @@ class CommonUtlity: NSObject
         let needsConnection = flags.contains(.connectionRequired)
         return (isReachable && !needsConnection)
     }
+    func getUserId() -> String
+    {
+        if let userData = UserDefaults.standard.value(forKey:"UserInfo") as? Data {
+            let userinfo = try? PropertyListDecoder().decode(LoginUserDetails.self, from: userData)
+            return userinfo?.user.id ?? ""
+        }
+        return ""
+    }
     
 }

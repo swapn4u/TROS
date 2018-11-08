@@ -39,11 +39,59 @@ class CoreDataManager {
             completion(false)
         }
     }
+    func isProductAddedInCart(productId:String) -> Bool
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
+        let predicate = NSPredicate(format: "id == %@",productId)
+        fetchRequest.predicate = predicate
+        
+        let result = try? context!.fetch(fetchRequest).count > 0
+        return result!
+    }
+    func deleteProductFromCart(id:String,completion:@escaping(Bool)->Void)
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
+        let predicate = NSPredicate(format: "id == %@",id)
+        fetchRequest.predicate = predicate
+        
+        let result = try? context!.fetch(fetchRequest)
+        let resultData = result as! [CartData]
+        
+        for object in resultData {
+            context?.delete(object)
+        }
+        
+        do {
+            try context?.save()
+            print("saved!")
+            completion(true)
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+            completion(false)
+        }
+    }
+    func deleteAllProductFromCart(completed:@escaping(Bool)->Void)
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
+        let request = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        do {
+            let result = try context?.execute(request)
+            completed(true)
+        } catch (let error)
+        {
+            completed(true)
+            print(error.localizedDescription)
+        }
+    }
+    
+    
     func saveOrderId(orderId:String,complation:@escaping(Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let orderDataContext = NSEntityDescription.entity(forEntityName: "OrderData", in: context!)
         guard let managerData = NSManagedObject.init(entity: orderDataContext!, insertInto: context!) as? OrderData else {return}
         managerData.orderId = orderId
+        managerData.userId = userId
         
         do {
             try context?.save()
@@ -55,8 +103,13 @@ class CoreDataManager {
     }
     func fetchOrderId()->[OrderData]?
     {
+        let userID = CommonUtlity.sharedInstance.getUserId()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OrderData")
+        let predicate = NSPredicate(format: "userId == %@",userID)
+        fetchRequest.predicate = predicate
+        
         do {
-            let orderIdData = (try context!.fetch(orderDataRequest) as? [OrderData])
+            let orderIdData = (try context!.fetch(fetchRequest) as? [OrderData])
             return orderIdData
         } catch let err {
             print(err.localizedDescription)
@@ -96,34 +149,12 @@ class CoreDataManager {
             completion(false)
         }
     }
-    func deleteProductFromCart(id:String,completion:@escaping(Bool)->Void)
+    func deleteAllOrderIds(completed:@escaping(Bool)->Void)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
-        let predicate = NSPredicate(format: "id == %@",id)
-        fetchRequest.predicate = predicate
-        
-        let result = try? context!.fetch(fetchRequest)
-        let resultData = result as! [CartData]
-        
-        for object in resultData {
-            context?.delete(object)
-        }
-        
-        do {
-            try context?.save()
-            print("saved!")
-            completion(true)
-        } catch let error as NSError  {
-            print("Could not save \(error), \(error.userInfo)")
-            completion(false)
-        }
-    }
-    func deleteAllProductFromCart(completed:@escaping(Bool)->Void)
-    {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OrderData")
         let request = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do {
-            let result = try context?.execute(request)
+            let _ = try context?.execute(request)
             completed(true)
         } catch (let error)
         {
@@ -131,6 +162,7 @@ class CoreDataManager {
             print(error.localizedDescription)
         }
     }
+    
 
     
 }
