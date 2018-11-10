@@ -55,9 +55,9 @@ class MapViewController: UIViewController {
 
     @IBAction func UseloactionAndProceedPressed(_ sender: UIButton)
     {
-        let VerifylVC = self.loadViewController(identifier: "VerifyViewController") as! VerifyViewController
+       let verifyUserVC =  self.loadViewController(identifier: "UserVerificationVC") as! UserVerificationVC
         locationManager.stopUpdatingLocation()
-        self.navigationController?.pushViewController(VerifylVC, animated: true)
+       self.navigationController?.pushViewController(verifyUserVC, animated: true)
     }
 }
 //Fetch Current Location

@@ -44,13 +44,13 @@ class PromocodeVC: UIViewController {
                     self.promocode = promocodeStatus.discount
                     if self.promocode > 0
                     {
-                        self.dicountLabel.textColor = UIColor.green
+                        self.dicountLabel.textColor = UIColor.blue
                         self.dicountLabel.text = "Congatulation !! You will get \(promocodeStatus.discount)% dicount on Current Price ."
                     }
                     else
                     {
                         self.dicountLabel.textColor = UIColor.red
-                        self.dicountLabel.text = "Opps !! No promocode Applicable,try something new."
+                        self.dicountLabel.text = "Opps ... " + promocodeStatus.message.capitalized
                     }
                     self.dismissLoader()
                     
@@ -66,9 +66,6 @@ class PromocodeVC: UIViewController {
     @IBAction func dismissScreen(_ sender: UIButton)
     {
         self.dismiss(animated: true)
-        if promocode > 0
-        {
-            getCashBackDelegate?.getCashback(discunt:promocode)
-        }
+        getCashBackDelegate?.getCashback(discunt:promocode)
     }
 }

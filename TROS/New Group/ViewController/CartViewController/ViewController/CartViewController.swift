@@ -58,6 +58,8 @@ class CartViewController: UIViewController {
    //view  life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        cartTable.estimatedRowHeight = 113
+        cartTable.rowHeight = UITableViewAutomaticDimension
         if let cartRecords = CoreDataManager.manager.fetch()
         {
             self.cartRecords = cartRecords
@@ -93,8 +95,9 @@ extension CartViewController
     @IBAction func PlaceOrderPressed(_ sender: UIButton)
     {
         let orderVC = self.loadViewController(identifier: "PlaceOrderViewController") as! PlaceOrderViewController
+        let totalPrice = Double(originalCartRecords.map{Double($0.cost) ?? 0.0}.reduce(0, +)) 
        let updatedCartRecords =  originalCartRecords.map { (element) -> ProductOrder in
-        let dict = ["name":element.name,"cost":element.cost ,"noOfItem":element.noOfItem,"imageURL":element.imageURL,"brand": element.brand,"totalCost":self.grandTotalLabel.text ?? "0.0","totalProducts": element.totalProducts,"unit":element.unit,"id":element.id,"quantity":element.quantity]
+        let dict = ["name":element.name,"cost":element.cost ,"noOfItem":element.noOfItem,"imageURL":element.imageURL,"brand": element.brand,"totalCost": " ₹ : " + String(format: "%.2f", totalPrice)  ,"totalProducts": element.totalProducts,"unit":element.unit,"id":element.id,"quantity":element.quantity]
             return ProductOrder(dict: dict)
         }
         orderVC.productOrder = updatedCartRecords
@@ -121,7 +124,8 @@ extension CartViewController : UITableViewDelegate,UITableViewDataSource
         cell.selectionStyle = .none
         cell.tag = indexPath.row
         cell.productImage.sd_setImage(with: URL(string: originalCartRecords[indexPath.row].imageURL ), placeholderImage: UIImage(named: PlaceholderImage))
-        cell.productName.text = originalCartRecords[indexPath.row].name
+        cell.productName.text = originalCartRecords[indexPath.row].name.uppercased()
+        cell.sellerLabel.text = "Brand : " + originalCartRecords[indexPath.row].brand.uppercased()
         cell.amountLabel.text = " ₹ : \(Double(originalCartRecords[indexPath.row].cost) ?? 0.0)"
         cell.deleteProductButton.tag = indexPath.row
         cell.totalItemLabel.text = originalCartRecords[indexPath.row].totalProducts
@@ -130,7 +134,7 @@ extension CartViewController : UITableViewDelegate,UITableViewDataSource
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 180
+        return UITableViewAutomaticDimension
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath)
     {

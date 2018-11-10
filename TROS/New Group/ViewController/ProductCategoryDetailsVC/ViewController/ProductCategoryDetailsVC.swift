@@ -38,7 +38,7 @@ class ProductCategoryDetailsVC: UIViewController {
                 
             }
         }
-        productTableView.estimatedRowHeight = 110
+        productTableView.estimatedRowHeight = 133
         productTableView.rowHeight = UITableViewAutomaticDimension
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -68,11 +68,11 @@ extension ProductCategoryDetailsVC:UITableViewDataSource,UITableViewDelegate
         cell.selectionStyle = .none
         cell.separatorInset = .zero
         cell.productImage.sd_setImage(with: URL(string: commonFilter[indexPath.row].imageUrl), placeholderImage: UIImage(named: PlaceholderImage))
-        cell.brandName.text =  "Brand :" + commonFilter[indexPath.row].brand
+        cell.brandName.text =  "Brand : " + commonFilter[indexPath.row].brand.capitalized
         cell.price.text = "₹ : \(commonFilter[indexPath.row].cost) / \(commonFilter[indexPath.row].unit)"
         cell.descriptionText.isHidden = commonFilter[indexPath.row].description.trimmingCharacters(in: .whitespaces) == ""
         cell.descriptionText.text = self.commonFilter[indexPath.row].description.html2String.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "\n", with: "")
-        cell.productNameLabel.text = commonFilter[indexPath.row].name
+        cell.productNameLabel.text = commonFilter[indexPath.row].name.uppercased()
         cell.addToCartButton.tag = indexPath.row
         cell.addToCartButton.addTarget(self, action: #selector(addToCartPressed(sender:)), for: .touchUpInside)
         if indexPath.row == commonFilter.count-1 && !isProductsFinished && isSearchBarHide

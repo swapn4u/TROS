@@ -42,9 +42,9 @@ class PlaceOrderViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-       customiseNavigationBarWith(isHideNavigationBar: false, headingText: "Place Order", isBackBtnVisible: true, accessToOpenSlider: true, leftBarOptionToShow: .none)
-        
+     customiseNavigationBarWith(isHideNavigationBar: false, headingText: "Place Order", isBackBtnVisible: true, accessToOpenSlider: true, leftBarOptionToShow: .none)
+        placeOrderTableView.estimatedRowHeight = 80
+        placeOrderTableView.rowHeight = UITableViewAutomaticDimension
         customerName.text = getValueFor(key: "name")
         contactNameLabel.text = getValueFor(key: "mobileNo")
         Address.text = getValueFor(key: "address")
@@ -158,7 +158,7 @@ class PlaceOrderViewController: UIViewController {
             self.customerName.text = self.editNameTF.text
             self.Address.text = self.editAdressTF.text
             self.contactNameLabel.text = self.editContactNoTF.text
-            saveRecord()
+            //saveRecord()
         }
         UIView.animate(withDuration: 0.5, animations: {
             self.editAddressContainerView.isHidden = !self.editAddressContainerView.isHidden
@@ -191,8 +191,8 @@ extension PlaceOrderViewController : UITableViewDelegate,UITableViewDataSource
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceOrderCell") as! PlaceOrderCell
         cell.productImageView.sd_setImage(with: URL(string: productOrder[indexPath.row].imageURL), placeholderImage: UIImage(named: PlaceholderImage))
-        cell.productNameLabel.text = productOrder[indexPath.row].name
-        cell.productBrand.text = productOrder[indexPath.row].brand
+        cell.productNameLabel.text = productOrder[indexPath.row].name.uppercased()
+        cell.productBrand.text = productOrder[indexPath.row].brand.uppercased()
         cell.productCost.text = "₹ : \(Double(productOrder[indexPath.row].cost) ?? 0.0)"
         cell.noOfOrder.text = productOrder[indexPath.row].totalProducts
         return cell
@@ -224,7 +224,7 @@ extension PlaceOrderViewController : addressChangesProtocol
         self.customerName.text = updateInfo["Name"] as? String ?? ""
         self.Address.text = updateInfo["address"] as? String ?? ""
         self.contactNameLabel.text = updateInfo["contactNo"] as? String ?? ""
-        saveRecord()
+        //saveRecord()
     }
     func saveRecord()
     {
@@ -317,9 +317,17 @@ extension PlaceOrderViewController : getCashBackDelegate
                 self.promocodeHolder.isHidden=false
                 self.promocodeDiscountStatus.text = "PromoCode(\(discunt)% OFF)"
                 let dicountPrice = String(format: "%.2f",(Double(self.totalCost.text!.replacingOccurrences(of: " ₹ : ", with: ""))! * Double(discunt) / 100.0))
-                self.promocodeAmount.text = " ₹ : - \(dicountPrice)"
+                self.promocodeAmount.text = "-₹ : \(dicountPrice)"
                 self.estimatedPrice.text = " ₹ : " + String(format: "%.2f",Double(self.estimatedPrice.text!.replacingOccurrences(of: " ₹ : ", with: ""))! - Double(dicountPrice)!)
                 self.view.layoutIfNeeded()
+            }
+        }
+        else
+        {
+            UIView.animate(withDuration: 0.3)
+            {
+                self.promocodeHolder.isHidden=true
+                self.estimatedPrice.text = "\(self.productOrder.last?.totalCost ?? "-")"
             }
         }
     }

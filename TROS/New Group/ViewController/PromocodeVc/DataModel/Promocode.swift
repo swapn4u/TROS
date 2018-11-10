@@ -16,6 +16,7 @@ struct PromoCode
     var expiry : String
     var promoCode : String
     var providerName : String
+    var message : String
     init(dict:[String:Any])
     {
         self.version = dict["__v"] as? Int ?? 0
@@ -25,5 +26,6 @@ struct PromoCode
         self.expiry = dict["expiry"] as? String ?? ""
         self.promoCode = dict["promoCode"] as? String ?? ""
         self.providerName = dict["providerName"] as? String ?? ""
+        self.message = dict["message"] as? String ?? ""
     }
 }

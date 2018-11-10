@@ -29,7 +29,7 @@ class SelectAddressVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         customiseNavigationBarWith(isHideNavigationBar: false, headingText: "My Addresses", isBackBtnVisible: true, accessToOpenSlider: false, leftBarOptionToShow: .none)
-        tableView.estimatedRowHeight = 44
+        tableView.estimatedRowHeight = 88
         tableView.rowHeight = UITableViewAutomaticDimension
 
         let defualts = UserDefaults.standard
@@ -66,7 +66,7 @@ extension SelectAddressVC : UITableViewDataSource,UITableViewDelegate
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectAddressCell") as! SelectAddressCell
         cell.nameLabel.text = nameArr[indexPath.row]
         cell.addressLabel.text  = addressArr[indexPath.row].replacingOccurrences(of: "*", with: "")
-        cell.contactNoLabel.text = mobileNoArr[indexPath.row]
+        cell.contactNoLabel.text = "Contact No : " + mobileNoArr[indexPath.row]
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -75,7 +75,7 @@ extension SelectAddressVC : UITableViewDataSource,UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let selectedCell = tableView.cellForRow(at: indexPath) as! SelectAddressCell
-        let updateInfo = ["Name":selectedCell.nameLabel.text ?? "" ,"address":selectedCell.addressLabel.text ?? "" , "contactNo":selectedCell.contactNoLabel.text ?? ""]
+        let updateInfo = ["Name":selectedCell.nameLabel.text ?? "" ,"address":selectedCell.addressLabel.text ?? "" , "contactNo":mobileNoArr[indexPath.row]]
         delegate?.updateSelectedAdress(updateInfo: updateInfo)
         self.navigationController?.popViewController(animated: true)
     }
@@ -86,7 +86,7 @@ extension SelectAddressVC : UITableViewDataSource,UITableViewDelegate
             let addNewAddressVC = self.loadViewController(identifier: "CreateAddressVC") as! CreateAddressVC
             let cell = tableView.cellForRow(at:indexPath) as! SelectAddressCell
             let addressArr = self.editableArr[indexPath.row].components(separatedBy: "*")
-                if let editDataArr =  [cell.nameLabel.text!,cell.contactNoLabel.text!,String(addressArr[2].dropLast()),String(addressArr[1].dropLast()),String(addressArr[0].dropLast()),String(addressArr[4]),String(addressArr[3].dropLast())] as? [String]
+                if let editDataArr =  [cell.nameLabel.text!,self.mobileNoArr[indexPath.row],String(addressArr[2].dropLast()),String(addressArr[1].dropLast()),String(addressArr[0].dropLast()),String(addressArr[4]),String(addressArr[3].dropLast())] as? [String]
                 {
 
                      addNewAddressVC.editData =  editDataArr

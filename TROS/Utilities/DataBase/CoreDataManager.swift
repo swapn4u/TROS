@@ -15,7 +15,8 @@ class CoreDataManager {
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     let fetchCartRequest = NSFetchRequest <NSFetchRequestResult> (entityName: "CartData")
     let orderDataRequest = NSFetchRequest <NSFetchRequestResult> (entityName: "OrderData")
-    
+     let userId = CommonUtlity.sharedInstance.getUserId()
+   
     func saveData(recordDict:ProductList,completion:(Bool)->Void)
     {
         let cartDataContext = NSEntityDescription.entity(forEntityName: "CartData", in: context!)
@@ -30,6 +31,7 @@ class CoreDataManager {
             managerData.imageWidth = "\(recordDict.imageWidth)"
             managerData.imageHeight = "\(recordDict.imageHeight)"
             managerData.discriptions = recordDict.description
+            managerData.userID = userId
        
         do {
             try context?.save()
@@ -42,7 +44,7 @@ class CoreDataManager {
     func isProductAddedInCart(productId:String) -> Bool
     {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
-        let predicate = NSPredicate(format: "id == %@",productId)
+        let predicate = NSPredicate(format: "id == %@ && userID == %@",productId,userId)
         fetchRequest.predicate = predicate
         
         let result = try? context!.fetch(fetchRequest).count > 0
@@ -51,7 +53,7 @@ class CoreDataManager {
     func deleteProductFromCart(id:String,completion:@escaping(Bool)->Void)
     {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
-        let predicate = NSPredicate(format: "id == %@",id)
+        let predicate = NSPredicate(format: "id == %@ && userID == %@",id,userId)
         fetchRequest.predicate = predicate
         
         let result = try? context!.fetch(fetchRequest)
@@ -73,9 +75,11 @@ class CoreDataManager {
     func deleteAllProductFromCart(completed:@escaping(Bool)->Void)
     {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
+        let predicate = NSPredicate(format: "userID == %@",userId)
+        fetchRequest.predicate = predicate
         let request = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do {
-            let result = try context?.execute(request)
+            let _ = try context?.execute(request)
             completed(true)
         } catch (let error)
         {
@@ -84,10 +88,8 @@ class CoreDataManager {
         }
     }
     
-    
     func saveOrderId(orderId:String,complation:@escaping(Bool)->Void)
     {
-        let userId = CommonUtlity.sharedInstance.getUserId()
         let orderDataContext = NSEntityDescription.entity(forEntityName: "OrderData", in: context!)
         guard let managerData = NSManagedObject.init(entity: orderDataContext!, insertInto: context!) as? OrderData else {return}
         managerData.orderId = orderId
@@ -103,9 +105,8 @@ class CoreDataManager {
     }
     func fetchOrderId()->[OrderData]?
     {
-        let userID = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OrderData")
-        let predicate = NSPredicate(format: "userId == %@",userID)
+        let predicate = NSPredicate(format: "userId == %@",userId)
         fetchRequest.predicate = predicate
         
         do {
@@ -117,20 +118,25 @@ class CoreDataManager {
         return [OrderData]()
     }
     
-    func fetch() -> [CartData]? {
-         do {
-            let cartData = (try context!.fetch(fetchCartRequest) as? [CartData])
+    func fetch() -> [CartData]?
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
+        let predicate = NSPredicate(format: "userID == %@",userId)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let cartData = (try context!.fetch(fetchRequest) as? [CartData])
             return cartData
-         } catch let err {
+        } catch let err {
             print(err.localizedDescription)
         }
-       return [CartData]()
+        return [CartData]()
     }
     
     func deleteOrderId(id:String,completion:@escaping(Bool)->Void)
     {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OrderData")
-        let predicate = NSPredicate(format: "orderId == %@",id)
+        let predicate = NSPredicate(format: "orderId == %@ && userID == %@",id,userId)
         fetchRequest.predicate = predicate
         
         let result = try? context!.fetch(fetchRequest)
@@ -162,7 +168,54 @@ class CoreDataManager {
             print(error.localizedDescription)
         }
     }
-    
-
-    
+    func saveAddressInfo(addressInfo:SavedAddresses,completed:@escaping(Bool)->Void)
+    {
+        let cartDataContext = NSEntityDescription.entity(forEntityName: "SavedAddress", in: context!)
+        guard let managerData = NSManagedObject.init(entity: cartDataContext!, insertInto: context!) as? SavedAddress else {return}
+        managerData.name = addressInfo.name
+        managerData.address = addressInfo.address
+        managerData.contactNumber = addressInfo.contactNo
+        managerData.userID = userId
+        
+        do {
+            try context?.save()
+            completed(true)
+        } catch let err {
+            print(err)
+            completed(false)
+        }
+    }
+    func getSavedAddresses()-> [SavedAddress]
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SavedAddress")
+        let predicate = NSPredicate(format: "userId == %@",userId)
+        fetchRequest.predicate = predicate
+        do {
+            let savedAddData = (try context!.fetch(fetchRequest) as! [SavedAddress])
+            return savedAddData
+        } catch let err {
+            print(err.localizedDescription)
+        }
+        return [SavedAddress]()
+    }
+    func deleteAddress(_ address : String,completed:@escaping (Bool)->Void)
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SavedAddress")
+        let predicate = NSPredicate(format: "address == %@ && userID == %@",address,userId)
+        fetchRequest.predicate = predicate
+        let result = try? context!.fetch(fetchRequest)
+        let resultData = result as! [SavedAddress]
+        
+        for object in resultData {
+            context?.delete(object)
+        }
+        do {
+            try context?.save()
+            print("saved!")
+            completed(true)
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+            completed(false)
+        }
+    }
 }

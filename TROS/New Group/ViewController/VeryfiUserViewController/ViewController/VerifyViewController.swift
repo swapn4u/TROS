@@ -37,9 +37,9 @@ class VerifyViewController: UIViewController {
    
     @IBAction func SubmitButtenPressed(_ sender: UIButton)
     {
-        if (nameLabel.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)!
+        if nameLabel.text!.split(separator: " ").count <= 2
         {
-            showAlertFor(title: "Verification", description: "Please Enter Full Name.")
+            showAlertFor(title: "Verification", description: "Please Enter Full Name (i.e First Middle and Last).")
             return
         }
         if (emailID.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)!
@@ -75,7 +75,7 @@ class VerifyViewController: UIViewController {
         }
         else
         {
-            self.showLoaderWith(Msg: "sendimg OTP ..")
+            self.showLoaderWith(Msg: "sending OTP ..")
             AuthoriseManager.verifyMobile(dict: ["mobile"
                 : mobileNoLabel.text ?? "","dialCode" : countryCode.text ?? "+91"]) { (response) in
                     switch response
@@ -93,9 +93,9 @@ class VerifyViewController: UIViewController {
                         self.dismissLoader()
                         switch error {
                         case .unknownError( _,_) :
-                            self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
+                            self.showAlertFor(title: "Verification", description: NO_DATA_AVAILABLE_MSG)
                         default:
-                            self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                            self.showAlertFor(title: "Verification", description: SERVICE_FAILURE_MESSAGE)
                         }
                     }
             }
@@ -119,11 +119,12 @@ class VerifyViewController: UIViewController {
                     self.showLoaderWith(Msg: "Verifing OTP...")
                     let nameArr = (self.nameLabel.text ?? "").split(separator: " ")
                     let firstName =  nameArr.first ?? ""
+                    let middleName = nameArr[1]
                     let lastName = nameArr.count > 1 ? nameArr.last! : ""
                     var dict = [String:Any]()
                     if !isExistingUser
                     {
-                        dict = ["isNew":true,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName , "lastName": lastName,"displayName":firstName,"versionCode":"160000001"]
+                        dict = ["isNew":true,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName,"middleName" : middleName , "lastName": lastName,"displayName":firstName,"versionCode":"160000001"]
                     }
                     else
                     {
@@ -134,15 +135,29 @@ class VerifyViewController: UIViewController {
                         {
                         case .success(let resultMsg):
                             self.dismissLoader()
-                            print(resultMsg)
+                             print(resultMsg)
+                            if resultMsg == "verified"
+                            {
+                                let categoryVC = self.loadViewController(identifier: "ProductCategoriesVC") as! ProductCategoriesVC
+                                let userName = (self.getUserInfo()?.user.firstName)! + (self.getUserInfo()?.user.middleName)! + (self.getUserInfo()?.user.lastName)!
+                                self.saveRecord(value: userName, forKey: "name")
+                                self.saveRecord(value: self.mobileNoLabel.text!, forKey: "mobileNo")
+                                self.saveRecord(value: "Male", forKey: "gender")
+                                self.navigationController?.pushViewController(categoryVC, animated: true)
+                            }
+                            else
+                            {
+                                self.showAlertFor(title: "Verification", description: resultMsg)
+                            }
+                           
                             
                         case .failure(let error):
                             self.dismissLoader()
                             switch error {
                             case .unknownError( _,_) :
-                                self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
+                                self.showAlertFor(title: "Verification", description: NO_DATA_AVAILABLE_MSG)
                             default:
-                                self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                                self.showAlertFor(title: "Verification", description: SERVICE_FAILURE_MESSAGE)
                             }
                         }
                         
@@ -152,9 +167,9 @@ class VerifyViewController: UIViewController {
                     self.dismissLoader()
                     switch error {
                     case .unknownError( _,_) :
-                        self.showAlertFor(title: "Product List", description: NO_DATA_AVAILABLE_MSG)
+                        self.showAlertFor(title: "Verification", description: NO_DATA_AVAILABLE_MSG)
                     default:
-                        self.showAlertFor(title: "Product List", description: SERVICE_FAILURE_MESSAGE)
+                        self.showAlertFor(title: "Verification", description: SERVICE_FAILURE_MESSAGE)
                     }
                 }
             }

@@ -57,11 +57,11 @@ class AuthoriseManager: NSObject
             switch(result)
             {
             case .success(let response):
-                guard let userResponseDict = response.dictionaryObject as? [String:Any] else {
+                guard let userResponseDict = response.dictionaryObject else {
                     completed(.failure(.unknownError(message: "Please Enter Valid Mobile Number", statusCode: 000)))
                     return
                 }
-                if let otpMsg = userResponseDict["message"] as? String ,otpMsg == "OTP Expired" || otpMsg == "Mobile already exist"
+                if let otpMsg = userResponseDict["message"] as? String ,otpMsg == "OTP Expired" || otpMsg == "Mobile already exist" || otpMsg == "Please try again"
                 {
                     completed(.success(otpMsg))
                 }
@@ -69,8 +69,8 @@ class AuthoriseManager: NSObject
                 {
                     let userDatas = LoginUserDetails(dict: userResponseDict)
                     UserDefaults.standard.set(try? PropertyListEncoder().encode(userDatas), forKey:"UserInfo")
-                   UserDefaults.standard.synchronize()
-                  completed(.success("verified"))
+                    UserDefaults.standard.synchronize()
+                   completed(.success("verified"))
                 }
                 break
             case .failure(let error):

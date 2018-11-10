@@ -11,6 +11,18 @@ protocol updateNewAddressDelegate
 {
     func addNewAddress(updateInfo:[String:String],isFromUpdate:Bool)
 }
+struct SavedAddresses
+{
+    var name : String
+    var address : String
+    var contactNo : String
+    init(dict:[String:Any]) {
+        self.name = dict["name"] as? String ?? ""
+        self.address = dict["address"] as? String ?? ""
+        self.contactNo = dict["contactNo"] as? String ?? ""
+    }
+    
+}
 class CreateAddressVC: UIViewController {
     @IBOutlet weak var nameTF: UITextField!
     @IBOutlet weak var contactNoTF: UITextField!
