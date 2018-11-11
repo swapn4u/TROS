@@ -38,7 +38,7 @@ class PlaceOrderViewController: UIViewController {
     
     let razorpayTestKey =  "rzp_live_ILgsfZCZoFIKMb"//"rzp_test_eqYSar04b0Gimj"
     
-    var productOrder = [ProductOrder(dict:[String:Any]())]
+    var productOrder = [ProductOrder]()
     var promoCode = ""
     
     override func viewDidLoad() {

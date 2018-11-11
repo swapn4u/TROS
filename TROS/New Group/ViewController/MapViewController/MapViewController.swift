@@ -15,6 +15,7 @@ class MapViewController: UIViewController {
     var locationManager = CLLocationManager()
     var currentLocation: CLLocation!
     var isFromMenuSelection = false
+    var CurrentAddress = ""
 
     //Outlet Connections
     @IBOutlet weak var mapViewPresenter: GMSMapView!
@@ -23,7 +24,10 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         self.mapViewPresenter.delegate = self
         setUpMyLocation()
-        setRootVC("MapViewController")
+        if !isFromMenuSelection
+        {
+            setRootVC("MapViewController")
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -55,12 +59,20 @@ class MapViewController: UIViewController {
 
     @IBAction func UseloactionAndProceedPressed(_ sender: UIButton)
     {
-       let verifyUserVC =  self.loadViewController(identifier: "UserVerificationVC") as! UserVerificationVC
-        locationManager.stopUpdatingLocation()
         let cordinates = locationManager.location?.coordinate
         saveRecord(value: "\(cordinates?.latitude ?? 0.0)", forKey:"lat" )
         saveRecord(value:"\(cordinates?.longitude ?? 0.0)" , forKey: "long")
-       self.navigationController?.pushViewController(verifyUserVC, animated: true)
+         saveRecord(value: CurrentAddress, forKey: "address")
+        if isFromMenuSelection
+        {
+            showAlertFor(title: "Change Location", description: "Location Updated SuccessFully")
+        }
+        else
+        {
+            let verifyUserVC =  self.loadViewController(identifier: "UserVerificationVC") as! UserVerificationVC
+            locationManager.stopUpdatingLocation()
+            self.navigationController?.pushViewController(verifyUserVC, animated: true)
+        }
     }
 }
 //Fetch Current Location
@@ -89,6 +101,7 @@ extension MapViewController : CLLocationManagerDelegate,GMSMapViewDelegate
                         print(places!)
                          let address = "\(placeInfo.locality ?? "")*\(placeInfo.subLocality ?? ""),*\(""),*\(placeInfo.postalCode ?? ""),*\(placeInfo.administrativeArea ?? "")"
                         self.saveRecord(value: address, forKey: "currentLocation")
+                        self.CurrentAddress = String(places!)
                         self.showMarker(position: camera.target, address: String(places!))
                     }
                 }
@@ -115,7 +128,6 @@ extension MapViewController
     imageView.image = #imageLiteral(resourceName: "redPin")
     marker.iconView = imageView
     marker.snippet = address
-    saveRecord(value: address, forKey: "address")
     marker.map = mapViewPresenter
 }
     @objc func searchButtonPressed()

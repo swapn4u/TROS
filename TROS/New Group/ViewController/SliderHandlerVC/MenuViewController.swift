@@ -22,6 +22,9 @@ class MenuViewController: UIViewController {
     let options = ["Home","Change Location","My Cart","My Orders","Log Out"]//"Notification","Share App","My Account","Login/Sign up"]
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         nameLabel.text = getValueFor(key: "name")
         mobileNoLabel.text = getValueFor(key: "mobileNo")
         addressLabel.text = getValueFor(key: "address")

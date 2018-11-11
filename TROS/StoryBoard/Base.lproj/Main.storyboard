@@ -2022,14 +2022,14 @@
                                             <action selector="ApplyPromocodePressed:" destination="nIE-SP-Dni" eventType="touchUpInside" id="6uj-bm-XhE"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2OU-qV-KXQ">
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2OU-qV-KXQ">
                                         <rect key="frame" x="0.0" y="211" width="300" height="35"/>
                                         <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="35" id="4IO-ei-bfI"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="20"/>
-                                        <state key="normal" title="DONE">
+                                        <state key="normal" title="USE COUPON">
                                             <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
@@ -2081,25 +2081,25 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qKi-My-5PX">
-                                <rect key="frame" x="109" y="278.5" width="157" height="55"/>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qKi-My-5PX">
+                                <rect key="frame" x="93" y="286" width="188" height="40"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="55" id="o4V-99-Mcv"/>
+                                    <constraint firstAttribute="width" constant="188" id="HJ6-M6-Uyy"/>
+                                    <constraint firstAttribute="height" constant="40" id="Mkt-bb-DMQ"/>
                                 </constraints>
                                 <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="19"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.77017337328767121" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="GxN-EB-rdr" firstAttribute="trailing" secondItem="qKi-My-5PX" secondAttribute="trailing" constant="109" id="5gt-6T-L4l"/>
-                            <constraint firstItem="qKi-My-5PX" firstAttribute="centerY" secondItem="W3h-1L-y0l" secondAttribute="centerY" id="KP5-mc-YSC"/>
-                            <constraint firstItem="qKi-My-5PX" firstAttribute="leading" secondItem="GxN-EB-rdr" secondAttribute="leading" constant="109" id="i4K-Ph-Uvt"/>
                             <constraint firstItem="9cf-ct-ic8" firstAttribute="centerX" secondItem="jhS-vw-1mj" secondAttribute="centerX" id="is1-85-0va"/>
+                            <constraint firstItem="qKi-My-5PX" firstAttribute="centerY" secondItem="W3h-1L-y0l" secondAttribute="centerY" id="jK1-h7-Pnk"/>
                             <constraint firstItem="9cf-ct-ic8" firstAttribute="centerY" secondItem="jhS-vw-1mj" secondAttribute="centerY" id="nzJ-Et-m6c"/>
+                            <constraint firstItem="qKi-My-5PX" firstAttribute="centerX" secondItem="W3h-1L-y0l" secondAttribute="centerX" id="z2t-Oc-M6b"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="GxN-EB-rdr"/>
                     </view>

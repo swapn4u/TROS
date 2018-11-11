@@ -36,7 +36,8 @@ class PromocodeVC: UIViewController {
                 showAlertFor(title: "Promo Code", description: "Please Enter Valid Promocode to Proceed .")
                 return
             }
-            PromocodeManager.getPromocodeFor(dict: ["promoCode":promoCodeTF.text!,"UserId":self.getUserInfo()?.user.id ?? ""], header: ["Content-Type":"application/json","authorization":self.getUserInfo()?.token ?? ""]) { (response) in
+            showLoaderWith(Msg: "Verifing Promocode...")
+            PromocodeManager.getPromocodeFor(dict: ["promoCode":promoCodeTF.text!.trimmingCharacters(in: .whitespaces),"UserId":self.getUserInfo()?.user.id ?? ""], header: ["Content-Type":"application/json","authorization":self.getUserInfo()?.token ?? ""]) { (response) in
                 switch response
                 {
                 case .success(let promocodeStatus):
@@ -66,6 +67,6 @@ class PromocodeVC: UIViewController {
     @IBAction func dismissScreen(_ sender: UIButton)
     {
         self.dismiss(animated: true)
-        getCashBackDelegate?.getCashback(discunt:promoCodeDiscount,promocode: promoCodeTF.text ?? "")
+        getCashBackDelegate?.getCashback(discunt:sender.tag == 0 ? 0 : promoCodeDiscount,promocode: promoCodeTF.text ?? "")
     }
 }
