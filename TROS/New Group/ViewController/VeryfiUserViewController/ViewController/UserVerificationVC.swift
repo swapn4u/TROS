@@ -24,7 +24,12 @@ class UserVerificationVC: UIViewController {
     }
     @IBAction func getOTPPressed(_ sender: Any)
     {
-        if !CommonUtlity.sharedInstance.isInternetAvailable()
+        if (mobileNoTF.text?.replacingOccurrences(of: " ", with: "").isEmpty)!
+        {
+            showAlertFor(title: "Verify User", description: "Enter Mobile Number")
+            return
+        }
+        else if !CommonUtlity.sharedInstance.isInternetAvailable()
         {
             showAlertFor(title: "Verify User", description: NO_INTERNET_CONNECTIVITY)
             return
@@ -60,7 +65,12 @@ class UserVerificationVC: UIViewController {
     
     @IBAction func VerifiNumberPressed(_ sender: UIButton)
     {
-        if !CommonUtlity.sharedInstance.isInternetAvailable()
+        if (mobileNoTF.text?.replacingOccurrences(of: " ", with: "").isEmpty)!
+        {
+            showAlertFor(title: "Verify User", description: "Enter OTP to Verify.")
+            return
+        }
+        else if !CommonUtlity.sharedInstance.isInternetAvailable()
         {
             showAlertFor(title: "Verification", description: NO_INTERNET_CONNECTIVITY)
             return
@@ -73,15 +83,14 @@ class UserVerificationVC: UIViewController {
                 {
                 case .success(let isExistingUser):
                     self.dismissLoader()
-                    self.showLoaderWith(Msg: "Verifing OTP...")
-                   
                     if !isExistingUser
                     {
-                                let VerifylVC = self.loadViewController(identifier: "VerifyViewController") as! VerifyViewController
-                                self.navigationController?.pushViewController(VerifylVC, animated: true)
+                        let VerifylVC = self.loadViewController(identifier: "VerifyViewController") as! VerifyViewController
+                        self.navigationController?.pushViewController(VerifylVC, animated: true)
                     }
                     else
                     {
+                        self.showLoaderWith(Msg: "Verifing OTP...")
                         let dict = ["isNew":false,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoTF.text ?? "","dialCode":self.countryCode.text ?? ""],"versionCode":"160000001"] as [String : Any]
                  
                     AuthoriseManager.verifyOTP(dict: dict, completed: { (response) in

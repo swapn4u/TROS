@@ -57,6 +57,9 @@ class MapViewController: UIViewController {
     {
        let verifyUserVC =  self.loadViewController(identifier: "UserVerificationVC") as! UserVerificationVC
         locationManager.stopUpdatingLocation()
+        let cordinates = locationManager.location?.coordinate
+        saveRecord(value: "\(cordinates?.latitude ?? 0.0)", forKey:"lat" )
+        saveRecord(value:"\(cordinates?.longitude ?? 0.0)" , forKey: "long")
        self.navigationController?.pushViewController(verifyUserVC, animated: true)
     }
 }

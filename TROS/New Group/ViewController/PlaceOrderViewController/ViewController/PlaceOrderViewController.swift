@@ -38,7 +38,8 @@ class PlaceOrderViewController: UIViewController {
     
     let razorpayTestKey =  "rzp_live_ILgsfZCZoFIKMb"//"rzp_test_eqYSar04b0Gimj"
     
-    var  productOrder = [ProductOrder(dict:[String:Any]())]
+    var productOrder = [ProductOrder(dict:[String:Any]())]
+    var promoCode = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -267,7 +268,7 @@ extension PlaceOrderViewController : RazorpayPaymentCompletionProtocol , Externa
             return dict
         }
         
-        let orderDict = ["payment":["method":"cash","paymentId":productId],"address":["line3":Address.text ?? "","line2":"","line1":"","loc":["19.1311563","72.8360014"],"type":"Point"],"items":orderDetails] as [String : Any]
+        let orderDict = ["payment":["method":"cash","paymentId":productId],"address":["line3":Address.text ?? "","line2":"","line1":"","loc":["19.1311563","72.8360014"],"type":"Point"],"items":orderDetails,"promoCode":promoCode] as [String : Any]
         
         PlaceOrderManager.placeOrderFor(dict: orderDict, header: ["Content-Type":"application/json","authorization":self.getUserInfo()?.token ?? ""], completed: { (result) in
             switch result
@@ -310,10 +311,11 @@ extension PlaceOrderViewController : RazorpayPaymentCompletionProtocol , Externa
 }
 extension PlaceOrderViewController : getCashBackDelegate
 {
-    func getCashback(discunt: Int) {
+    func getCashback(discunt: Int, promocode: String) {
         if discunt>0
         {
             UIView.animate(withDuration: 0.3) {
+                self.promoCode = promocode
                 self.promocodeHolder.isHidden=false
                 self.promocodeDiscountStatus.text = "PromoCode(\(discunt)% OFF)"
                 let dicountPrice = String(format: "%.2f",(Double(self.totalCost.text!.replacingOccurrences(of: " ₹ : ", with: ""))! * Double(discunt) / 100.0))
@@ -326,6 +328,7 @@ extension PlaceOrderViewController : getCashBackDelegate
         {
             UIView.animate(withDuration: 0.3)
             {
+                self.promoCode = ""
                 self.promocodeHolder.isHidden=true
                 self.estimatedPrice.text = "\(self.productOrder.last?.totalCost ?? "-")"
             }

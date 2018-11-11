@@ -9,6 +9,16 @@
 import Foundation
 import UIKit
 import SystemConfiguration
+struct LocationManager
+{
+    var latitude : String
+    var longitude : String
+    init(dict:[String:Any]) {
+        self.latitude = dict["lat"] as? String ?? ""
+        self.longitude = dict["long"] as? String ?? ""
+    }
+}
+
 enum leftBarOption
 {
     case search ,cart ,none
@@ -248,6 +258,12 @@ extension UIViewController
     {
         UserDefaults.standard.set(viewController, forKey: "root")
     }
-
+ 
+    func getCordinates() -> LocationManager
+    {
+        let userDefaults = UserDefaults.standard
+        let cordinates = ["lat":userDefaults.value(forKey: "lat") as? String ?? "19.136326","long" : userDefaults.value(forKey: "long") as? String ?? "72.827660"]
+        return LocationManager(dict: cordinates)
+    }
 }
 

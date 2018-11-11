@@ -15,10 +15,10 @@ class CoreDataManager {
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     let fetchCartRequest = NSFetchRequest <NSFetchRequestResult> (entityName: "CartData")
     let orderDataRequest = NSFetchRequest <NSFetchRequestResult> (entityName: "OrderData")
-     let userId = CommonUtlity.sharedInstance.getUserId()
    
     func saveData(recordDict:ProductList,completion:(Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let cartDataContext = NSEntityDescription.entity(forEntityName: "CartData", in: context!)
         guard let managerData = NSManagedObject.init(entity: cartDataContext!, insertInto: context!) as? CartData else {return}
             managerData.name = recordDict.name
@@ -43,6 +43,7 @@ class CoreDataManager {
     }
     func isProductAddedInCart(productId:String) -> Bool
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
         let predicate = NSPredicate(format: "id == %@ && userID == %@",productId,userId)
         fetchRequest.predicate = predicate
@@ -52,6 +53,7 @@ class CoreDataManager {
     }
     func deleteProductFromCart(id:String,completion:@escaping(Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
         let predicate = NSPredicate(format: "id == %@ && userID == %@",id,userId)
         fetchRequest.predicate = predicate
@@ -74,6 +76,7 @@ class CoreDataManager {
     }
     func deleteAllProductFromCart(completed:@escaping(Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
         let predicate = NSPredicate(format: "userID == %@",userId)
         fetchRequest.predicate = predicate
@@ -90,6 +93,7 @@ class CoreDataManager {
     
     func saveOrderId(orderId:String,complation:@escaping(Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let orderDataContext = NSEntityDescription.entity(forEntityName: "OrderData", in: context!)
         guard let managerData = NSManagedObject.init(entity: orderDataContext!, insertInto: context!) as? OrderData else {return}
         managerData.orderId = orderId
@@ -105,6 +109,7 @@ class CoreDataManager {
     }
     func fetchOrderId()->[OrderData]?
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OrderData")
         let predicate = NSPredicate(format: "userId == %@",userId)
         fetchRequest.predicate = predicate
@@ -120,6 +125,7 @@ class CoreDataManager {
     
     func fetch() -> [CartData]?
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CartData")
         let predicate = NSPredicate(format: "userID == %@",userId)
         fetchRequest.predicate = predicate
@@ -135,6 +141,7 @@ class CoreDataManager {
     
     func deleteOrderId(id:String,completion:@escaping(Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OrderData")
         let predicate = NSPredicate(format: "orderId == %@ && userID == %@",id,userId)
         fetchRequest.predicate = predicate
@@ -157,6 +164,7 @@ class CoreDataManager {
     }
     func deleteAllOrderIds(completed:@escaping(Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OrderData")
         let request = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do {
@@ -170,6 +178,7 @@ class CoreDataManager {
     }
     func saveAddressInfo(addressInfo:SavedAddresses,completed:@escaping(Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let cartDataContext = NSEntityDescription.entity(forEntityName: "SavedAddress", in: context!)
         guard let managerData = NSManagedObject.init(entity: cartDataContext!, insertInto: context!) as? SavedAddress else {return}
         managerData.name = addressInfo.name
@@ -187,6 +196,7 @@ class CoreDataManager {
     }
     func getSavedAddresses()-> [SavedAddress]
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SavedAddress")
         let predicate = NSPredicate(format: "userId == %@",userId)
         fetchRequest.predicate = predicate
@@ -200,6 +210,7 @@ class CoreDataManager {
     }
     func deleteAddress(_ address : String,completed:@escaping (Bool)->Void)
     {
+        let userId = CommonUtlity.sharedInstance.getUserId()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SavedAddress")
         let predicate = NSPredicate(format: "address == %@ && userID == %@",address,userId)
         fetchRequest.predicate = predicate

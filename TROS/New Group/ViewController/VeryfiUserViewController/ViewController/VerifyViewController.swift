@@ -124,7 +124,7 @@ class VerifyViewController: UIViewController {
                     var dict = [String:Any]()
                     if !isExistingUser
                     {
-                        dict = ["isNew":true,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName,"middleName" : middleName , "lastName": lastName,"displayName":firstName,"versionCode":"160000001"]
+                        dict = ["isNew":true,"otp":self.enterOTPLabel.text ?? "","contact":["mobile" : self.mobileNoLabel.text ?? "","dialCode":self.countryCode.text ?? ""],"firstName":firstName,"middleName" : middleName , "lastName": lastName,"displayName":firstName,"email":self.emailID.text!,"versionCode":"160000001"]
                     }
                     else
                     {

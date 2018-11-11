@@ -8,14 +8,14 @@
 
 import UIKit
 protocol getCashBackDelegate {
-    func getCashback(discunt:Int)
+    func getCashback(discunt: Int,promocode:String)
 }
 class PromocodeVC: UIViewController {
 
     @IBOutlet weak var dicountLabel: UILabel!
     @IBOutlet weak var promoCodeTF: UITextField!
     var getCashBackDelegate : getCashBackDelegate?
-    var promocode = 0
+    var promoCodeDiscount = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         self.dicountLabel.isHidden = true
@@ -41,8 +41,8 @@ class PromocodeVC: UIViewController {
                 {
                 case .success(let promocodeStatus):
                     self.dicountLabel.isHidden = false
-                    self.promocode = promocodeStatus.discount
-                    if self.promocode > 0
+                    self.promoCodeDiscount = promocodeStatus.discount
+                    if self.promoCodeDiscount > 0
                     {
                         self.dicountLabel.textColor = UIColor.blue
                         self.dicountLabel.text = "Congatulation !! You will get \(promocodeStatus.discount)% dicount on Current Price ."
@@ -66,6 +66,6 @@ class PromocodeVC: UIViewController {
     @IBAction func dismissScreen(_ sender: UIButton)
     {
         self.dismiss(animated: true)
-        getCashBackDelegate?.getCashback(discunt:promocode)
+        getCashBackDelegate?.getCashback(discunt:promoCodeDiscount,promocode: promoCodeTF.text ?? "")
     }
 }
